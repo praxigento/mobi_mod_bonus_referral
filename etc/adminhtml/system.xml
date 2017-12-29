@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<config
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="praxigento_downline" translate="label"
+                 sortOrder="1024" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Downline</label>
+            <tab>praxigento_mobi</tab>
+            <resource>Magento_Customer::config_customer</resource>
+            <group id="referral_bonus" translate="label" type="text"
+                   sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Referral Bonus</label>
+                <field id="enabled" translate="label comment" type="select"
+                       sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable/disable referral bonus.</comment>
+                </field>
+                <field id="delay_days" translate="label comment" type="text"
+                       sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment Delay</label>
+                    <comment>Bonus payment delay in days (default: 7).</comment>
+                </field>
+                <field id="fee_fixed" translate="label comment" type="text"
+                       sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fee Fixed Amount</label>
+                    <comment>Fixed amount to be charged as processing fee. Fee amount equals to fixed
+                        amount plus percent from retail bonus, not less than min and not greater than max.
+                    </comment>
+                </field>
+                <field id="fee_percent" translate="label comment" type="text"
+                       sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fee Percent</label>
+                    <comment>Percent of the bonus to be charged as processing fee (from 0.00 to 1.00).</comment>
+                </field>
+                <field id="fee_min" translate="label comment" type="text"
+                       sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fee Min Amount</label>
+                    <comment>Minimal amount to be charged as processing fee.</comment>
+                </field>
+                <field id="fee_max" translate="label comment" type="text"
+                       sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Fee Max Amount</label>
+                    <comment>Maximal amount to be charged as processing fee.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
