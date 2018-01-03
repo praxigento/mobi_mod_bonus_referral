@@ -16,6 +16,8 @@ class Calc
     private $factQuote;
     /** @var \Magento\Quote\Model\Quote\AddressFactory */
     private $factQuoteAddr;
+    /** @var \Praxigento\BonusReferral\Helper\Config */
+    private $hlpConfig;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
     /** @var \Praxigento\BonusReferral\Service\Sale\Calc\Repo\Query\Product\Prices */
@@ -34,15 +36,30 @@ class Calc
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
         \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
         \Magento\Sales\Api\OrderRepositoryInterface $repoSaleOrder,
+        \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         QBPrices $qbPrices
     ) {
         $this->logger = $logger;
+        $this->factQuote = $factQuote;
+        $this->factQuoteAddr = $factQuoteAddr;
         $this->repoProd = $repoProd;
         $this->repoCust = $repoCust;
         $this->repoSaleOrder = $repoSaleOrder;
-        $this->factQuote = $factQuote;
-        $this->factQuoteAddr = $factQuoteAddr;
+        $this->hlpConfig = $hlpConfig;
         $this->qbPrices = $qbPrices;
+    }
+
+    private function calculateFee($amount)
+    {
+        $fixed = $this->hlpConfig->getBonusFeeFixed();
+        $percent = $this->hlpConfig->getBonusFeePercent();
+        $min = $this->hlpConfig->getBonusFeeMin();
+        $max = $this->hlpConfig->getBonusFeeMax();
+        $result = $fixed + $amount * $percent;
+        $result = ($result < $min) ? $min : $result;
+        $result = ($result > $max) ? $max : $result;
+        $result = number_format($result, 2);
+        return $result;
     }
 
     public function exec($request)
@@ -85,16 +102,18 @@ class Calc
 
             /* collect totals */
             $quote->collectTotals();
-            $baseGrandUp = $quote->getBaseGrandTotal();
-            $baseGrandCust = $sale->getBaseGrandTotal();
-            $delta = $baseGrandCust - $baseGrandUp;
+            $baseAmntUp = $quote->getBaseSubtotalWithDiscount();
+            $baseAmntCust = $sale->getBaseSubtotal() - $sale->getBaseDiscountAmount() + $sale->getBaseShippingDiscountAmount();
+            $delta = $baseAmntCust - $baseAmntUp;
+            $fee = $this->calculateFee($delta);
 
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
         /** compose result */
-
         $result = new AResponse();
+        if ($delta) $result->setDelta($delta);
+        if ($fee) $result->setFee($fee);
         return $result;
     }
 
