@@ -97,7 +97,7 @@ class Config
         $result = $this->scopeConfig->getValue('praxigento_downline/referral_bonus/delay_days', AScope::SCOPE_STORE);
         if (is_null($result)) $result = 7; // default value for delay
         $result = filter_var($result, FILTER_VALIDATE_INT);
-        if ($result < 0) $result = 0;
+        if ($result < 0) $result = 7;
         return $result;
     }
 
