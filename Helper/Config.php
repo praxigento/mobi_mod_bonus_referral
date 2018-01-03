@@ -80,7 +80,7 @@ class Config
      */
     public function getBonusFeePercent()
     {
-        $result = $this->scopeConfig->getValue('praxigento_downline/referral_bonus/fee_fixed', AScope::SCOPE_STORE);
+        $result = $this->scopeConfig->getValue('praxigento_downline/referral_bonus/fee_percent', AScope::SCOPE_STORE);
         $result = filter_var($result, FILTER_VALIDATE_FLOAT);
         if ($result < 0) $result = 0;
         if ($result > 1) $result = 1;
