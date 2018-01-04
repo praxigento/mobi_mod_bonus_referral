@@ -39,7 +39,7 @@
                         "alias": "state",
                         "comment": "Referral bonus state (pending | paid | reverted).",
                         "nullable": false,
-                        "type": {"text": {}}
+                        "type": {"text": {"length": 255}}
                       },
                       "AmountTotal": {
                         "alias": "amount_total",
