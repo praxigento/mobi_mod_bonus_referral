@@ -68,7 +68,10 @@ class Register
         if ($isEnabled) {
             $uplineId = $this->getUplineId($custId);
             list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
-            $this->registerBonus($saleId, $uplineId, $amount, $fee);
+            if ($amount > 0) {
+                $this->registerBonus($saleId, $uplineId, $amount, $fee);
+                $this->logger->debug("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
+            }
         }
         /** compose result */
         $result = new AResponse();
@@ -89,6 +92,14 @@ class Register
         return $result;
     }
 
+    /**
+     * Save new bonus entry in DB.
+     *
+     * @param int $saleId
+     * @param int $custId
+     * @param float $amount
+     * @param floet $fee
+     */
     private function registerBonus($saleId, $custId, $amount, $fee)
     {
         $entity = new ERegistry();
@@ -96,6 +107,7 @@ class Register
         $entity->setUplineRef($custId);
         $entity->setAmountTotal($amount);
         $entity->setAmountFee($fee);
+        $entity->setState(ERegistry::STATE_PROCESSING);
         $this->repoReg->create($entity);
     }
 }

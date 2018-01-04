@@ -6,7 +6,6 @@
 namespace Praxigento\BonusReferral\Observer;
 
 use Praxigento\BonusReferral\Service\Sale\Register\Request as ARequest;
-use Praxigento\BonusReferral\Service\Sale\Register\Response as AResponse;
 
 /**
  * Register referral bonus for credit cards payments.
@@ -41,9 +40,8 @@ class CheckoutSubmitAllAfter
                 $this->logger->debug("Register referral bonus on checkout.");
                 $req = new ARequest();
                 $req->setSaleOrder($sale);
-                /** @var AResponse $resp */
-                $resp = $this->servReg->exec($req);
-            } catch (\Exception $e) {
+                $this->servReg->exec($req);
+            } catch (\Throwable $e) {
                 /* catch all exceptions and steal them */
                 $msg = 'Error is occurred on referral bonus registration (checkout). Error: ' . $e->getMessage();
                 $this->logger->error($msg);

@@ -32,14 +32,14 @@
                       "OperationRef": {
                         "alias": "operation_ref",
                         "comment": "Bonus payout operation reference.",
-                        "nullable": false,
+                        "nullable": true,
                         "type": {"integer": {"unsigned": true}}
                       },
                       "State": {
                         "alias": "state",
                         "comment": "Referral bonus state (pending | paid | reverted).",
                         "nullable": false,
-                        "type": {"text": {}}
+                        "type": {"text": {"length": 255}}
                       },
                       "AmountTotal": {
                         "alias": "amount_total",
