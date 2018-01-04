@@ -10,6 +10,9 @@ use Praxigento\BonusReferral\Service\Sale\Calc\Request as ARequest;
 use Praxigento\BonusReferral\Service\Sale\Calc\Response as AResponse;
 use Praxigento\Warehouse\Plugin\Catalog\Model\Product\Type\Price as APricePlugin;
 
+/**
+ * Internal service (module level) to calculate referral bonus amount & processing fee.
+ */
 class Calc
 {
     /** @var \Magento\Quote\Model\QuoteFactory */
@@ -67,12 +70,11 @@ class Calc
         /** define local working data */
         assert($request instanceof ARequest);
         $custId = $request->getUplineId();
-        $saleId = $request->getSaleId();
+        /** @var \Magento\Sales\Model\Order $sale */
+        $sale = $request->getSaleOrder();
 
         /** perform processing */
         try {
-            /** @var \Magento\Sales\Model\Order $sale */
-            $sale = $this->repoSaleOrder->get($saleId);
             $customer = $this->repoCust->getById($custId);
             $custGroupId = $customer->getGroupId();
             $storeId = $sale->getStoreId();

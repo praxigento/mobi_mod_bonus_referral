@@ -1,0 +1,101 @@
+<?php
+/**
+ * User: Alex Gusev <alex@flancer64.com>
+ */
+
+namespace Praxigento\BonusReferral\Service\Sale;
+
+use Praxigento\BonusReferral\Repo\Entity\Data\Registry as ERegistry;
+use Praxigento\BonusReferral\Service\Sale\Calc\Request as ACalcReq;
+use Praxigento\BonusReferral\Service\Sale\Calc\Response as ACalcResp;
+use Praxigento\BonusReferral\Service\Sale\Register\Request as ARequest;
+use Praxigento\BonusReferral\Service\Sale\Register\Response as AResponse;
+
+/**
+ * Internal service (module level) to register referral bonus.
+ */
+class Register
+{
+    /** @var \Praxigento\BonusReferral\Helper\Config */
+    private $hlpConfig;
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    private $repoDwnl;
+    /** @var \Praxigento\BonusReferral\Repo\Entity\Registry */
+    private $repoReg;
+    /** @var \Praxigento\BonusReferral\Service\Sale\Calc */
+    private $servCalc;
+
+    public function __construct(
+        \Psr\Log\LoggerInterface $logger,
+        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg,
+        \Praxigento\BonusReferral\Helper\Config $hlpConfig,
+        \Praxigento\BonusReferral\Service\Sale\Calc $servCalc
+    ) {
+        $this->logger = $logger;
+        $this->repoDwnl = $repoDwnl;
+        $this->repoReg = $repoReg;
+        $this->hlpConfig = $hlpConfig;
+        $this->servCalc = $servCalc;
+    }
+
+    private function calcAmounts(
+        \Magento\Sales\Model\Order $sale,
+        int $uplineId
+    ) {
+        $req = new ACalcReq();
+        $req->setSaleOrder($sale);
+        $req->setUplineId($uplineId);
+        /** @var ACalcResp $resp */
+        $resp = $this->servCalc->exec($req);
+        $amount = $resp->getDelta();
+        $fee = $resp->getFee();
+        return [$amount, $fee];
+    }
+
+    public function exec($request)
+    {
+        /** define local working data */
+        assert($request instanceof ARequest);
+        $sale = $request->getSaleOrder();
+        $saleId = $sale->getId();
+        $custId = $sale->getCustomerId();
+
+        /** perform processing */
+        $isEnabled = $this->hlpConfig->getBonusEnabled();
+        if ($isEnabled) {
+            $uplineId = $this->getUplineId($custId);
+            list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
+            $this->registerBonus($saleId, $uplineId, $amount, $fee);
+        }
+        /** compose result */
+        $result = new AResponse();
+        return $result;
+    }
+
+    /**
+     * Get upline ID for current customer.
+     *
+     * @param int $custId
+     * @return int
+     */
+    private function getUplineId($custId)
+    {
+        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer $entity */
+        $entity = $this->repoDwnl->getById($custId);
+        $result = $entity->getParentId();
+        return $result;
+    }
+
+    private function registerBonus($saleId, $custId, $amount, $fee)
+    {
+        $entity = new ERegistry();
+        $entity->setSaleRef($saleId);
+        $entity->setUplineRef($custId);
+        $entity->setAmountTotal($amount);
+        $entity->setAmountFee($fee);
+        $this->repoReg->create($entity);
+    }
+}

@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusReferral\Test\Service\Sale\Calc;
+namespace Praxigento\BonusReferral\Test\Service\Sale;
 
 include_once(__DIR__ . '/../../phpunit_bootstrap.php');
 
