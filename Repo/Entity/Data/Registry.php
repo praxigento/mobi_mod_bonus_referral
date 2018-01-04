@@ -18,7 +18,9 @@ class Registry
     const ATTR_STATE = 'state';
     const ATTR_UPLINE_REF = 'upline_ref';
     const ENTITY_NAME = 'prxgt_bon_referral_reg';
-    const STATE_PROCESSING = 'processing';
+    const STATE_PAID = 'paid';
+    const STATE_PENDING = 'pending';
+    const STATE_REVERTED = 'reverted';
 
     /** @return float */
     public function getAmountFee()

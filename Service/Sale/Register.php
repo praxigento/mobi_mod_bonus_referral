@@ -107,7 +107,7 @@ class Register
         $entity->setUplineRef($custId);
         $entity->setAmountTotal($amount);
         $entity->setAmountFee($fee);
-        $entity->setState(ERegistry::STATE_PROCESSING);
+        $entity->setState(ERegistry::STATE_PENDING);
         $this->repoReg->create($entity);
     }
 }
