@@ -22,7 +22,7 @@ class Collect
     private $cacheRepresAccId;
     /** @var \Praxigento\BonusReferral\Helper\Config */
     private $hlpConfig;
-    /** @var \Praxigento\Core\Tool\IDate */
+    /** @var \Praxigento\Core\Api\Helper\Date */
     private $hlpDate;
     /** @var \Praxigento\Core\Tool\IFormat */
     private $hlpFormat;
@@ -50,7 +50,7 @@ class Collect
         \Praxigento\Accounting\Repo\Entity\Type\Asset $repoAssetType,
         \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
-        \Praxigento\Core\Tool\IDate $hlpDate,
+        \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Tool\IFormat $hlpFormat,
         \Praxigento\Accounting\Api\Service\Account\Get $servAccGet,
         \Praxigento\Accounting\Api\Service\Operation $servOper,
