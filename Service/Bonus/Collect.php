@@ -24,7 +24,7 @@ class Collect
     private $hlpConfig;
     /** @var \Praxigento\Core\Api\Helper\Date */
     private $hlpDate;
-    /** @var \Praxigento\Core\Tool\IFormat */
+    /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -51,7 +51,7 @@ class Collect
         \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
-        \Praxigento\Core\Tool\IFormat $hlpFormat,
+        \Praxigento\Core\Api\Helper\Format $hlpFormat,
         \Praxigento\Accounting\Api\Service\Account\Get $servAccGet,
         \Praxigento\Accounting\Api\Service\Operation $servOper,
         QBGetRegs $qbGetRegs
