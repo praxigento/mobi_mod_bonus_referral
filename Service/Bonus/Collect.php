@@ -92,7 +92,7 @@ class Collect
         /* create operation */
         $req = new AReqOper();
         $req->setCustomerId($custId);
-        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_REFERRAL);
+        $req->setOperationTypeCode(Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY);
         $req->setTransactions($trans);
         /** @var ARespOper $resp */
         $resp = $this->servOper->exec($req);

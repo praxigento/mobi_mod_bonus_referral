@@ -22,7 +22,8 @@ class InstallData extends \Praxigento\Core\App\Setup\Data\Base
             $this->_resource->getTableName(TypeOperation::ENTITY_NAME),
             [TypeOperation::ATTR_CODE, TypeOperation::ATTR_NOTE],
             [
-                [Cfg::CODE_TYPE_OPER_BONUS_REFERRAL, 'Change account balance by operator (adminhtml).']
+                [Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY, 'Referral bonus bounty payment.'],
+                [Cfg::CODE_TYPE_OPER_BONUS_REF_FEE, 'Referral bonus fee.']
             ]
         );
     }
