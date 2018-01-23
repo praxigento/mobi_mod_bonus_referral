@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusReferral\Service\Sale;
 
+use Magento\Sales\Model\Order as MSaleOrder;
 use Praxigento\BonusReferral\Repo\Entity\Data\Registry as ERegistry;
 use Praxigento\BonusReferral\Service\Sale\Calc\Request as ACalcReq;
 use Praxigento\BonusReferral\Service\Sale\Calc\Response as ACalcResp;
@@ -61,6 +62,7 @@ class Register
         assert($request instanceof ARequest);
         $sale = $request->getSaleOrder();
         $saleId = $sale->getId();
+        $saleState = $sale->getState();
         $custId = $sale->getCustomerId();
 
         /** perform processing */
@@ -68,8 +70,10 @@ class Register
         if ($isEnabled) {
             $uplineId = $this->getUplineId($custId);
             list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
+            $state = ($saleState == MSaleOrder::STATE_PROCESSING)
+                ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
             if ($amount > 0) {
-                $this->registerBonus($saleId, $uplineId, $amount, $fee);
+                $this->registerBonus($saleId, $uplineId, $amount, $fee, $state);
                 $this->logger->debug("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
             }
         }
@@ -100,14 +104,14 @@ class Register
      * @param float $amount
      * @param floet $fee
      */
-    private function registerBonus($saleId, $custId, $amount, $fee)
+    private function registerBonus($saleId, $custId, $amount, $fee, $state)
     {
         $entity = new ERegistry();
         $entity->setSaleRef($saleId);
         $entity->setUplineRef($custId);
         $entity->setAmountTotal($amount);
         $entity->setAmountFee($fee);
-        $entity->setState(ERegistry::STATE_PENDING);
+        $entity->setState($state);
         $this->repoReg->create($entity);
     }
 }

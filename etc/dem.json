@@ -37,7 +37,7 @@
                       },
                       "State": {
                         "alias": "state",
-                        "comment": "Referral bonus state (pending | paid | reverted).",
+                        "comment": "Referral bonus state (registered | pending | paid | reverted).",
                         "nullable": false,
                         "type": {"text": {"length": 255}}
                       },

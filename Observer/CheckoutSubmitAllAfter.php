@@ -34,18 +34,15 @@ class CheckoutSubmitAllAfter
     {
         /** @var \Magento\Sales\Model\Order $sale */
         $sale = $observer->getData(self::DATA_ORDER);
-        $state = $sale->getState();
-        if ($state == \Magento\Sales\Model\Order::STATE_PROCESSING) {
-            try {
-                $this->logger->debug("Register referral bonus on checkout.");
-                $req = new ARequest();
-                $req->setSaleOrder($sale);
-                $this->servReg->exec($req);
-            } catch (\Throwable $e) {
-                /* catch all exceptions and steal them */
-                $msg = 'Error is occurred on referral bonus registration (checkout). Error: ' . $e->getMessage();
-                $this->logger->error($msg);
-            }
+        try {
+            $this->logger->debug("Register referral bonus on checkout.");
+            $req = new ARequest();
+            $req->setSaleOrder($sale);
+            $this->servReg->exec($req);
+        } catch (\Throwable $e) {
+            /* catch all exceptions and steal them */
+            $msg = 'Error is occurred on referral bonus registration. Error: ' . $e->getMessage();
+            $this->logger->error($msg);
         }
     }
 

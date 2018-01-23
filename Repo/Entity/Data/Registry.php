@@ -20,6 +20,7 @@ class Registry
     const ENTITY_NAME = 'prxgt_bon_referral_reg';
     const STATE_PAID = 'paid';
     const STATE_PENDING = 'pending';
+    const STATE_REGISTERED = 'registered';
     const STATE_REVERTED = 'reverted';
 
     /** @return float */

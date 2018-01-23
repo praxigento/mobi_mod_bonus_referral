@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusReferral\Observer;
 
-use Praxigento\BonusReferral\Service\Sale\Register\Request as ARequest;
+use Praxigento\BonusReferral\Repo\Entity\Data\Registry as EReg;
 
 /**
  * Register referral bonus on invoice payments (check/money order).
@@ -18,32 +18,38 @@ class SalesOrderInvoicePay
     const DATA_INVOICE = 'invoice';
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\BonusReferral\Service\Sale\Register */
-    private $servReg;
+    /** @var \Praxigento\BonusReferral\Repo\Entity\Registry */
+    private $repoReg;
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Praxigento\BonusReferral\Service\Sale\Register $servReg
+        \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg
     ) {
         $this->logger = $logger;
-        $this->servReg = $servReg;
+        $this->repoReg = $repoReg;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
         /** @var \Magento\Sales\Model\Order\Invoice $invoice */
         $invoice = $observer->getData(self::DATA_INVOICE);
-        $state = $invoice->getState();
-        if ($state == \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
+        $invState = $invoice->getState();
+        if ($invState == \Magento\Sales\Model\Order\Invoice::STATE_PAID) {
             try {
-                $this->logger->debug("Register referral bonus on invoice payment.");
                 $sale = $invoice->getOrder();
-                $req = new ARequest();
-                $req->setSaleOrder($sale);
-                $this->servReg->exec($req);
+                $saleId = $sale->getId();
+                $registry = $this->repoReg->getById($saleId);
+                if ($registry) {
+                    $regState = $registry->getState();
+                    if ($regState == EReg::STATE_REGISTERED) {
+                        $registry->setState(EReg::STATE_PENDING);
+                        $pk = [EReg::ATTR_SALE_REF => $saleId];
+                        $this->repoReg->updateById($pk, $registry);
+                    }
+                }
             } catch (\Throwable $e) {
                 /* catch all exceptions and steal them */
-                $msg = 'Error is occurred on referral bonus registration (invoice). Error: ' . $e->getMessage();
+                $msg = 'Error is occurred on referral bonus state change. Error: ' . $e->getMessage();
                 $this->logger->error($msg);
             }
         }
