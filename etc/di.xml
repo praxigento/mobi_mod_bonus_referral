@@ -9,7 +9,7 @@
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="prxgt_bonref_cmd_calc" xsi:type="object">\Praxigento\BonusReferral\Cli\Collect</item>
+                <item name="prxgt:bonus:referral:collect" xsi:type="object">\Praxigento\BonusReferral\Cli\Collect</item>
             </argument>
         </arguments>
     </type>
