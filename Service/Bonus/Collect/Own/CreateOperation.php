@@ -78,7 +78,7 @@ class CreateOperation
     private function getAssetTypeId()
     {
         if (is_null($this->cacheAssetTypeId)) {
-            $this->cacheAssetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET_ACTIVE);
+            $this->cacheAssetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
         }
         return $this->cacheAssetTypeId;
     }
