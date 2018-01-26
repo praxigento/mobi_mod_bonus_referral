@@ -12,10 +12,6 @@ use Praxigento\BonusReferral\Config as Cfg;
 
 class CreateOperation
 {
-    /** @var int ID for WALLET ACTIVE asset */
-    private $cacheAssetTypeId;
-    /** @var int ID for representative account ID for WALLET ACTIVE asset */
-    private $cacheRepresAccId;
     /** @var \Praxigento\Accounting\Repo\Entity\Account */
     private $repoAcc;
     /** @var \Praxigento\Accounting\Repo\Entity\Type\Asset */
@@ -39,11 +35,12 @@ class CreateOperation
      * @param float $amount bounty or fee value (positive)
      * @param bool $isBounty 'true' - pay $amount to customer, 'false' - pay fee from customer account
      * @return int operation ID
+     * @throws \Exception
      */
     public function exec($saleId, $custId, $amount, $isBounty)
     {
-        $assetTypeId = $this->getAssetTypeId();
-        $accIdRepres = $this->getRepresAccId();
+        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
+        $accIdRepres = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
         $accCust = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
         $accIdCust = $accCust->getId();
         /* prepare bonus & fee transactions */
@@ -75,20 +72,4 @@ class CreateOperation
         return $result;
     }
 
-    private function getAssetTypeId()
-    {
-        if (is_null($this->cacheAssetTypeId)) {
-            $this->cacheAssetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
-        }
-        return $this->cacheAssetTypeId;
-    }
-
-    private function getRepresAccId()
-    {
-        if (is_null($this->cacheRepresAccId)) {
-            $assetId = $this->getAssetTypeId();
-            $this->cacheRepresAccId = $this->repoAcc->getRepresentativeAccountId($assetId);
-        }
-        return $this->cacheRepresAccId;
-    }
 }

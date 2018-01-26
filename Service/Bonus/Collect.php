@@ -46,6 +46,7 @@ class Collect
     /**
      * @param ARequest $request
      * @return AResponse
+     * @throws \Exception
      */
     public function exec($request)
     {
