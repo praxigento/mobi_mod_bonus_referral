@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Praxigento_BonusReferral::bonus_referral"
+             title="Bonus Referral"
+             translate="title"
+             module="Praxigento_BonusReferral"
+             sortOrder="500"
+             parent="Praxigento_BonusBase::bonus"
+             action="bonus/referral"
+             resource="Praxigento_BonusReferral::admin_bonus_referral"/>
+    </menu>
+</config>

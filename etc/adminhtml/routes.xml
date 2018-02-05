@@ -1,0 +1,8 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="prxgt_bonus_route">
+            <module name="Praxigento_BonusReferral" before="Praxigento_BonusBase"/>
+        </route>
+    </router>
+</config>
