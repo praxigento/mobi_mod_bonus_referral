@@ -13,14 +13,14 @@ use Praxigento\BonusReferral\Service\Bonus\Collect\Request as ARequest;
 class Collect
     extends \Praxigento\Core\App\Cli\Cmd\Base
 {
-    /** @var \Praxigento\Core\App\Api\Repo\Transaction\Manager */
+    /** @var \Praxigento\Core\Api\App\Repo\Transaction\Manager */
     private $manTrans;
     /** @var \Praxigento\BonusReferral\Service\Bonus\Collect */
     private $servCollect;
 
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $manObj,
-        \Praxigento\Core\App\Api\Repo\Transaction\Manager $manTrans,
+        \Praxigento\Core\Api\App\Repo\Transaction\Manager $manTrans,
         \Praxigento\BonusReferral\Service\Bonus\Collect $servCollect
     ) {
         parent::__construct(

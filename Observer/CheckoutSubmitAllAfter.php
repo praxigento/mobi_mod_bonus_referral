@@ -17,13 +17,13 @@ class CheckoutSubmitAllAfter
     /* Names for the items in the event's data */
     const DATA_ORDER = 'order';
 
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusReferral\Service\Sale\Register */
     private $servReg;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusReferral\Service\Sale\Register $servReg
     ) {
         $this->logger = $logger;

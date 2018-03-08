@@ -21,7 +21,7 @@ class Calc
     private $factQuoteAddr;
     /** @var \Praxigento\BonusReferral\Helper\Config */
     private $hlpConfig;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusReferral\Service\Sale\Calc\Repo\Query\Product\Prices */
     private $qbPrices;
@@ -33,7 +33,7 @@ class Calc
     private $repoSaleOrder;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Magento\Quote\Model\QuoteFactory $factQuote,
         \Magento\Quote\Model\Quote\AddressFactory $factQuoteAddr,
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,

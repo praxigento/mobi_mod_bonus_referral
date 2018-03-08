@@ -19,7 +19,7 @@ class Register
 {
     /** @var \Praxigento\BonusReferral\Helper\Config */
     private $hlpConfig;
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\Downline\Repo\Entity\Customer */
     private $repoDwnl;
@@ -29,7 +29,7 @@ class Register
     private $servCalc;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
         \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,

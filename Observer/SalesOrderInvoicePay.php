@@ -16,13 +16,13 @@ class SalesOrderInvoicePay
 {
     /* Names for the items in the event's data */
     const DATA_INVOICE = 'invoice';
-    /** @var \Praxigento\Core\App\Api\Logger\Main */
+    /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusReferral\Repo\Entity\Registry */
     private $repoReg;
 
     public function __construct(
-        \Praxigento\Core\App\Api\Logger\Main $logger,
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg
     ) {
         $this->logger = $logger;
