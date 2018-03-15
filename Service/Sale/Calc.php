@@ -5,10 +5,8 @@
 
 namespace Praxigento\BonusReferral\Service\Sale;
 
-use Praxigento\BonusReferral\Service\Sale\Calc\Repo\Query\Product\Prices as QBPrices;
 use Praxigento\BonusReferral\Service\Sale\Calc\Request as ARequest;
 use Praxigento\BonusReferral\Service\Sale\Calc\Response as AResponse;
-use Praxigento\Warehouse\Plugin\Catalog\Model\Product\Type\Price as APricePlugin;
 
 /**
  * Internal service (module level) to calculate referral bonus amount & processing fee.
@@ -23,14 +21,10 @@ class Calc
     private $hlpConfig;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusReferral\Service\Sale\Calc\Repo\Query\Product\Prices */
-    private $qbPrices;
     /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
     private $repoCust;
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
     private $repoProd;
-    /** @var \Magento\Sales\Api\OrderRepositoryInterface */
-    private $repoSaleOrder;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -38,18 +32,14 @@ class Calc
         \Magento\Quote\Model\Quote\AddressFactory $factQuoteAddr,
         \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
         \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
-        \Magento\Sales\Api\OrderRepositoryInterface $repoSaleOrder,
-        \Praxigento\BonusReferral\Helper\Config $hlpConfig,
-        QBPrices $qbPrices
+        \Praxigento\BonusReferral\Helper\Config $hlpConfig
     ) {
         $this->logger = $logger;
         $this->factQuote = $factQuote;
         $this->factQuoteAddr = $factQuoteAddr;
         $this->repoProd = $repoProd;
         $this->repoCust = $repoCust;
-        $this->repoSaleOrder = $repoSaleOrder;
         $this->hlpConfig = $hlpConfig;
-        $this->qbPrices = $qbPrices;
     }
 
     private function calculateFee($amount)
@@ -89,10 +79,6 @@ class Calc
             foreach ($items as $item) {
                 $prodId = $item->getProductId();
                 $product = $this->repoProd->getById($prodId, false, $storeId, true);
-                /* add warehouse prices */
-                list($priceWrhs, $priceGroup) = $this->getPrices($storeId, $prodId, $custGroupId);
-                $product->setData(APricePlugin::A_PRICE_WRHS, $priceWrhs);
-                $product->setData(APricePlugin::A_PRICE_WRHS_GROUP, $priceGroup);
                 $qty = $item->getQtyOrdered();
                 $quote->addProduct($product, $qty);
             }
@@ -119,24 +105,4 @@ class Calc
         return $result;
     }
 
-    private function getPrices($storeId, $prodId, $groupId)
-    {
-        $priceWrhs = $priceGroup = null;
-
-        $query = $this->qbPrices->build();
-        $conn = $query->getConnection();
-        $bind = [
-            QBPrices::BND_STOCK_ID => $storeId,
-            QBPrices::BND_PROD_ID => $prodId,
-            QBPrices::BND_GROUP_ID => $groupId
-        ];
-        $row = $conn->fetchRow($query, $bind);
-        if ($row) {
-            if ($row[QBPrices::A_PRICE_WRHS]) $priceWrhs = $row[QBPrices::A_PRICE_WRHS];
-            if ($row[QBPrices::A_PRICE_GROUP]) $priceGroup = $row[QBPrices::A_PRICE_GROUP];
-        }
-
-        $result = [$priceWrhs, $priceGroup];
-        return $result;
-    }
 }
