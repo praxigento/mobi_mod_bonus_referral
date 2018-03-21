@@ -40,21 +40,21 @@ class CreateOperation
     public function exec($saleId, $custId, $amount, $isBounty)
     {
         $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
-        $accIdRepres = $this->repoAcc->getRepresentativeAccountId($assetTypeId);
+        $accIdSys = $this->repoAcc->getSystemAccountId($assetTypeId);
         $accCust = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
         $accIdCust = $accCust->getId();
         /* prepare bonus & fee transactions */
         $trans = [];
         $tranBonus = new ETrans();
         if ($isBounty) {
-            $tranBonus->setDebitAccId($accIdRepres);
+            $tranBonus->setDebitAccId($accIdSys);
             $tranBonus->setCreditAccId($accIdCust);
             $tranBonus->setValue($amount);
             $note = "Ref. bonus bounty for sale order #$saleId.";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY;
         } else {
             $tranBonus->setDebitAccId($accIdCust);
-            $tranBonus->setCreditAccId($accIdRepres);
+            $tranBonus->setCreditAccId($accIdSys);
             $tranBonus->setValue($amount);
             $note = "Ref. bonus fee for sale order #$saleId.";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_FEE;
