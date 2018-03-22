@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusReferral\Repo\Entity;
+namespace Praxigento\BonusReferral\Repo\Dao;
 
 use Praxigento\BonusReferral\Repo\Data\Registry as Entity;
 

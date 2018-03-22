@@ -18,12 +18,12 @@ class SalesOrderInvoicePay
     const DATA_INVOICE = 'invoice';
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\BonusReferral\Repo\Entity\Registry */
+    /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
     private $repoReg;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg
+        \Praxigento\BonusReferral\Repo\Dao\Registry $repoReg
     ) {
         $this->logger = $logger;
         $this->repoReg = $repoReg;

@@ -23,11 +23,11 @@ class Collect
     private $ownOperCreate;
     /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\Own\Repo\Query\GetRegistered */
     private $qbGetRegs;
-    /** @var \Praxigento\BonusReferral\Repo\Entity\Registry */
+    /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
     private $repoReg;
 
     public function __construct(
-        \Praxigento\BonusReferral\Repo\Entity\Registry $repoReg,
+        \Praxigento\BonusReferral\Repo\Dao\Registry $repoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
