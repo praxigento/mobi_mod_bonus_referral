@@ -21,7 +21,7 @@ class Register
     private $hlpConfig;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Praxigento\Downline\Repo\Entity\Customer */
+    /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $repoDwnl;
     /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
     private $repoReg;
@@ -30,7 +30,7 @@ class Register
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\Downline\Repo\Entity\Customer $repoDwnl,
+        \Praxigento\Downline\Repo\Dao\Customer $repoDwnl,
         \Praxigento\BonusReferral\Repo\Dao\Registry $repoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\BonusReferral\Service\Sale\Calc $servCalc
@@ -90,7 +90,7 @@ class Register
      */
     private function getUplineId($custId)
     {
-        /** @var \Praxigento\Downline\Repo\Entity\Data\Customer $entity */
+        /** @var \Praxigento\Downline\Repo\Data\Customer $entity */
         $entity = $this->repoDwnl->getById($custId);
         $result = $entity->getParentId();
         return $result;
