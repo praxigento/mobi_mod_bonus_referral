@@ -7,7 +7,7 @@
 
 namespace Praxigento\BonusReferral\Setup;
 
-use Praxigento\Accounting\Repo\Entity\Data\Type\Operation as TypeOperation;
+use Praxigento\Accounting\Repo\Data\Type\Operation as TypeOperation;
 use Praxigento\BonusReferral\Config as Cfg;
 
 /**
