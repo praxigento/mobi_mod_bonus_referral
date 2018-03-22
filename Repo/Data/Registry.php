@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusReferral\Repo\Entity\Data;
+namespace Praxigento\BonusReferral\Repo\Data;
 
 /**
  * Registry for referral bonus entries.

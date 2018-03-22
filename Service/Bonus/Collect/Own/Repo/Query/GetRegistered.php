@@ -6,7 +6,7 @@
 namespace Praxigento\BonusReferral\Service\Bonus\Collect\Own\Repo\Query;
 
 use Praxigento\BonusReferral\Config as Cfg;
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as ERegistry;
+use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 
 /**
  * Query to get data for referral bonus from registry.

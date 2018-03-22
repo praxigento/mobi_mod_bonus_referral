@@ -7,7 +7,7 @@
 
 namespace Praxigento\BonusReferral\Setup;
 
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as Registry;
+use Praxigento\BonusReferral\Repo\Data\Registry as Registry;
 
 class InstallSchema
     extends \Praxigento\Core\App\Setup\Schema\Base

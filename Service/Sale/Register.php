@@ -6,7 +6,7 @@
 namespace Praxigento\BonusReferral\Service\Sale;
 
 use Magento\Sales\Model\Order as MSaleOrder;
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as ERegistry;
+use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 use Praxigento\BonusReferral\Service\Sale\Calc\Request as ACalcReq;
 use Praxigento\BonusReferral\Service\Sale\Calc\Response as ACalcResp;
 use Praxigento\BonusReferral\Service\Sale\Register\Request as ARequest;

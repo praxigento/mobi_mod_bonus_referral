@@ -6,7 +6,7 @@
 namespace Praxigento\BonusReferral\Service\Bonus;
 
 use Praxigento\BonusReferral\Config as Cfg;
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as ERegistry;
+use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 use Praxigento\BonusReferral\Service\Bonus\Collect\Own\Repo\Query\GetRegistered as QBGetRegs;
 use Praxigento\BonusReferral\Service\Bonus\Collect\Request as ARequest;
 use Praxigento\BonusReferral\Service\Bonus\Collect\Response as AResponse;

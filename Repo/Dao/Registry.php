@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusReferral\Repo\Entity;
 
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as Entity;
+use Praxigento\BonusReferral\Repo\Data\Registry as Entity;
 
 class Registry
     extends \Praxigento\Core\App\Repo\Def\Entity

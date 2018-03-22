@@ -7,7 +7,7 @@
 namespace Praxigento\BonusReferral\Ui\DataProvider\Grid\Bonus\Referral;
 
 use Praxigento\Accounting\Config as Cfg;
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as ERegistry;
+use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 
 class QueryBuilder
     extends \Praxigento\Core\App\Ui\DataProvider\Grid\Query\Builder

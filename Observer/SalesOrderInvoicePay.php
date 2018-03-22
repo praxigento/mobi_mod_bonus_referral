@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusReferral\Observer;
 
-use Praxigento\BonusReferral\Repo\Entity\Data\Registry as EReg;
+use Praxigento\BonusReferral\Repo\Data\Registry as EReg;
 
 /**
  * Register referral bonus on invoice payments (check/money order).
