@@ -16,9 +16,9 @@ class SalesOrderInvoicePay
     public function test_execute()
     {
         $this->setAreaCode();
-        /** @var \Magento\Sales\Api\InvoiceRepositoryInterface $repoInvoice */
-        $repoInvoice = $this->manObj->get(\Magento\Sales\Api\InvoiceRepositoryInterface::class);
-        $sale = $repoInvoice->get(2);
+        /** @var \Magento\Sales\Api\InvoiceRepositoryInterface $daoInvoice */
+        $daoInvoice = $this->manObj->get(\Magento\Sales\Api\InvoiceRepositoryInterface::class);
+        $sale = $daoInvoice->get(2);
         /** @var \Magento\Framework\Event\Observer $event */
         $event = $this->manObj->get(\Magento\Framework\Event\Observer::class);
         $event->setData(AObserver::DATA_INVOICE, $sale);

@@ -22,23 +22,23 @@ class Calc
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
-    private $repoCust;
+    private $daoCust;
     /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
-    private $repoProd;
+    private $daoProd;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Magento\Quote\Model\QuoteFactory $factQuote,
         \Magento\Quote\Model\Quote\AddressFactory $factQuoteAddr,
-        \Magento\Catalog\Api\ProductRepositoryInterface $repoProd,
-        \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
+        \Magento\Catalog\Api\ProductRepositoryInterface $daoProd,
+        \Magento\Customer\Api\CustomerRepositoryInterface $daoCust,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig
     ) {
         $this->logger = $logger;
         $this->factQuote = $factQuote;
         $this->factQuoteAddr = $factQuoteAddr;
-        $this->repoProd = $repoProd;
-        $this->repoCust = $repoCust;
+        $this->daoProd = $daoProd;
+        $this->daoCust = $daoCust;
         $this->hlpConfig = $hlpConfig;
     }
 
@@ -65,7 +65,7 @@ class Calc
 
         /** perform processing */
         try {
-            $customer = $this->repoCust->getById($custId);
+            $customer = $this->daoCust->getById($custId);
             $custGroupId = $customer->getGroupId();
             $storeId = $sale->getStoreId();
             /* init quote itself */
@@ -78,7 +78,7 @@ class Calc
             $items = $sale->getItemsCollection();
             foreach ($items as $item) {
                 $prodId = $item->getProductId();
-                $product = $this->repoProd->getById($prodId, false, $storeId, true);
+                $product = $this->daoProd->getById($prodId, false, $storeId, true);
                 $qty = $item->getQtyOrdered();
                 $quote->addProduct($product, $qty);
             }

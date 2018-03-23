@@ -19,14 +19,14 @@ class SalesOrderInvoicePay
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
     /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
-    private $repoReg;
+    private $daoReg;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\BonusReferral\Repo\Dao\Registry $repoReg
+        \Praxigento\BonusReferral\Repo\Dao\Registry $daoReg
     ) {
         $this->logger = $logger;
-        $this->repoReg = $repoReg;
+        $this->daoReg = $daoReg;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -38,13 +38,13 @@ class SalesOrderInvoicePay
             try {
                 $sale = $invoice->getOrder();
                 $saleId = $sale->getId();
-                $registry = $this->repoReg->getById($saleId);
+                $registry = $this->daoReg->getById($saleId);
                 if ($registry) {
                     $regState = $registry->getState();
                     if ($regState == EReg::STATE_REGISTERED) {
                         $registry->setState(EReg::STATE_PENDING);
                         $pk = [EReg::A_SALE_REF => $saleId];
-                        $this->repoReg->updateById($pk, $registry);
+                        $this->daoReg->updateById($pk, $registry);
                     }
                 }
             } catch (\Throwable $e) {
