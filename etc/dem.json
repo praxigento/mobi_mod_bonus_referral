@@ -43,13 +43,13 @@
                       },
                       "AmountTotal": {
                         "alias": "amount_total",
-                        "comment": "Total bonus amount to be paid to the upline of the referral.",
+                        "comment": "Total bonus amount to be paid to the upline of the referral (WALLET asset, base currency).",
                         "nullable": false,
                         "type": {"numeric": {"precision": 12, "scale": 4}}
                       },
                       "AmountFee": {
                         "alias": "amount_fee",
-                        "comment": "Processing fee to be subtracted from total bonus.",
+                        "comment": "Processing fee to be subtracted from total bonus (WALLET asset, base currency).",
                         "nullable": false,
                         "type": {"numeric": {"precision": 12, "scale": 4}}
                       }

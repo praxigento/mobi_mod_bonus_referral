@@ -7,34 +7,34 @@ namespace Praxigento\BonusReferral\Service\Bonus;
 
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
-use Praxigento\BonusReferral\Service\Bonus\Collect\Own\Repo\Query\GetRegistered as QBGetRegs;
+use Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query\GetRegistered as QBGetRegs;
 use Praxigento\BonusReferral\Service\Bonus\Collect\Request as ARequest;
 use Praxigento\BonusReferral\Service\Bonus\Collect\Response as AResponse;
 
 class Collect
 {
+    /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
+    private $daoReg;
     /** @var \Praxigento\BonusReferral\Helper\Config */
     private $hlpConfig;
     /** @var \Praxigento\Core\Api\Helper\Date */
     private $hlpDate;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
-    /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\Own\CreateOperation */
+    /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\A\CreateOperation */
     private $ownOperCreate;
-    /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\Own\Repo\Query\GetRegistered */
+    /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query\GetRegistered */
     private $qbGetRegs;
-    /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
-    private $repoReg;
 
     public function __construct(
-        \Praxigento\BonusReferral\Repo\Dao\Registry $repoReg,
+        \Praxigento\BonusReferral\Repo\Dao\Registry $daoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
         QBGetRegs $qbGetRegs,
-        \Praxigento\BonusReferral\Service\Bonus\Collect\Own\CreateOperation $ownOperCreate
+        \Praxigento\BonusReferral\Service\Bonus\Collect\A\CreateOperation $ownOperCreate
     ) {
-        $this->repoReg = $repoReg;
+        $this->daoReg = $daoReg;
         $this->hlpConfig = $hlpConfig;
         $this->hlpDate = $hlpDate;
         $this->hlpFormat = $hlpFormat;
@@ -104,6 +104,6 @@ class Collect
         $entity = new ERegistry();
         $entity->setOperationRef($operId);
         $entity->setState(ERegistry::STATE_PAID);
-        $this->repoReg->updateById($saleId, $entity);
+        $this->daoReg->updateById($saleId, $entity);
     }
 }

@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusReferral\Service\Bonus\Collect\Own;
+namespace Praxigento\BonusReferral\Service\Bonus\Collect\A;
 
 use Praxigento\Accounting\Api\Service\Operation\Request as AReqOper;
 use Praxigento\Accounting\Api\Service\Operation\Response as ARespOper;
@@ -13,19 +13,19 @@ use Praxigento\BonusReferral\Config as Cfg;
 class CreateOperation
 {
     /** @var \Praxigento\Accounting\Repo\Dao\Account */
-    private $repoAcc;
+    private $daoAcc;
     /** @var \Praxigento\Accounting\Repo\Dao\Type\Asset */
-    private $repoAssetType;
+    private $daoAssetType;
     /** @var \Praxigento\Accounting\Api\Service\Operation */
     private $servOper;
 
     public function __construct(
-        \Praxigento\Accounting\Repo\Dao\Account $repoAcc,
-        \Praxigento\Accounting\Repo\Dao\Type\Asset $repoAssetType,
+        \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
+        \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType,
         \Praxigento\Accounting\Api\Service\Operation $servOper
     ) {
-        $this->repoAcc = $repoAcc;
-        $this->repoAssetType = $repoAssetType;
+        $this->daoAcc = $daoAcc;
+        $this->daoAssetType = $daoAssetType;
         $this->servOper = $servOper;
     }
 
@@ -39,26 +39,28 @@ class CreateOperation
      */
     public function exec($saleId, $custId, $amount, $isBounty)
     {
-        $assetTypeId = $this->repoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
-        $accIdSys = $this->repoAcc->getSystemAccountId($assetTypeId);
-        $accCust = $this->repoAcc->getByCustomerId($custId, $assetTypeId);
+        $assetTypeId = $this->daoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
+        $accIdSys = $this->daoAcc->getSystemAccountId($assetTypeId);
+        $accCust = $this->daoAcc->getByCustomerId($custId, $assetTypeId);
         $accIdCust = $accCust->getId();
         /* prepare bonus & fee transactions */
         $trans = [];
         $tranBonus = new ETrans();
         if ($isBounty) {
-            $tranBonus->setDebitAccId($accIdSys);
-            $tranBonus->setCreditAccId($accIdCust);
-            $tranBonus->setValue($amount);
             $note = "Ref. bonus bounty for sale order #$saleId.";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY;
+            $accDebit = $accIdSys;
+            $accCredit = $accIdCust;
         } else {
-            $tranBonus->setDebitAccId($accIdCust);
-            $tranBonus->setCreditAccId($accIdSys);
-            $tranBonus->setValue($amount);
             $note = "Ref. bonus fee for sale order #$saleId.";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_FEE;
+            $accDebit = $accIdCust;
+            $accCredit = $accIdSys;
         }
+        $tranBonus->setDebitAccId($accDebit);
+        $tranBonus->setCreditAccId($accCredit);
+        $tranBonus->setValue($amount);
+        $tranBonus->setNote($note);
         $trans[] = $tranBonus;
         /* create operation */
         $req = new AReqOper();

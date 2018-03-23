@@ -3,7 +3,7 @@
  * User: Alex Gusev <alex@flancer64.com>
  */
 
-namespace Praxigento\BonusReferral\Service\Bonus\Collect\Own\Repo\Query;
+namespace Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query;
 
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
