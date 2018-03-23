@@ -48,10 +48,10 @@ class GetRegistered
         $tbl = $this->resource->getTableName(self::E_REGISTRY);
         $as = $asReg;
         $cols = [
-            self::A_SALE_ID => ERegistry::ATTR_SALE_REF,
-            self::A_CUST_ID => ERegistry::ATTR_UPLINE_REF,
-            self::A_BONUS => ERegistry::ATTR_AMOUNT_TOTAL,
-            self::A_FEE => ERegistry::ATTR_AMOUNT_FEE
+            self::A_SALE_ID => ERegistry::A_SALE_REF,
+            self::A_CUST_ID => ERegistry::A_UPLINE_REF,
+            self::A_BONUS => ERegistry::A_AMOUNT_TOTAL,
+            self::A_FEE => ERegistry::A_AMOUNT_FEE
         ];
         $result->from([$as => $tbl], $cols);
 
@@ -60,7 +60,7 @@ class GetRegistered
         $as = $asOrdr;
         $cols = [];
         $cond = $as . '.' . Cfg::E_SALE_ORDER_A_ENTITY_ID
-            . '=' . $asReg . '.' . ERegistry::ATTR_SALE_REF;
+            . '=' . $asReg . '.' . ERegistry::A_SALE_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN sales_invoice */
@@ -70,12 +70,12 @@ class GetRegistered
             self::A_DATE_PAID => Cfg::E_SALE_INVOICE_A_CREATED_AT
         ];
         $cond = $as . '.' . Cfg::E_SALE_INVOICE_A_ORDER_ID
-            . '=' . $asReg . '.' . ERegistry::ATTR_SALE_REF;
+            . '=' . $asReg . '.' . ERegistry::A_SALE_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* query tuning */
         $byDatePaid = "$asInv." . Cfg::E_SALE_INVOICE_A_CREATED_AT . "<=:" . self::BND_DATE_PAID;
-        $byState = "$asReg." . ERegistry::ATTR_STATE . "='" . ERegistry::STATE_PENDING . "'";
+        $byState = "$asReg." . ERegistry::A_STATE . "='" . ERegistry::STATE_PENDING . "'";
         $result->where("($byDatePaid) AND ($byState)");
 
         return $result;

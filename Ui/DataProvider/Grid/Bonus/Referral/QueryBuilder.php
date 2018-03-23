@@ -59,12 +59,12 @@ class QueryBuilder
     {
         if (is_null($this->mapper)) {
             $map = [
-                self::A_SALE_REF => self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_SALE_REF,
-                self::A_UPLINE_REF => self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_UPLINE_REF,
-                self::A_OPERATION_REF => self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_OPERATION_REF,
-                self::A_AMOUNT_TOTAL => self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_AMOUNT_TOTAL,
-                self::A_AMOUNT_FEE => self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_AMOUNT_FEE,
-                self::A_STATE => self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_STATE,
+                self::A_SALE_REF => self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_SALE_REF,
+                self::A_UPLINE_REF => self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_UPLINE_REF,
+                self::A_OPERATION_REF => self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_OPERATION_REF,
+                self::A_AMOUNT_TOTAL => self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_AMOUNT_TOTAL,
+                self::A_AMOUNT_FEE => self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_AMOUNT_FEE,
+                self::A_STATE => self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_STATE,
                 self::A_CUST_MLM_ID => self::AS_SALES_ORDER . '.' . Cfg::E_SALE_ORDER_A_CUSTOMER_ID,
                 self::A_CUST_NAME => $this->getExpForCustName(),
                 self::A_REF_NAME => $this->getExpForRefName()
@@ -88,12 +88,12 @@ class QueryBuilder
         $tbl = $this->resource->getTableName(ERegistry::ENTITY_NAME);
         $as = $asRefReg;
         $cols = [
-            self::A_SALE_REF => ERegistry::ATTR_SALE_REF,
-            self::A_UPLINE_REF => ERegistry::ATTR_UPLINE_REF,
-            self::A_OPERATION_REF => ERegistry::ATTR_OPERATION_REF,
-            self::A_STATE => ERegistry::ATTR_STATE,
-            self::A_AMOUNT_TOTAL => ERegistry::ATTR_AMOUNT_TOTAL,
-            self::A_AMOUNT_FEE => ERegistry::ATTR_AMOUNT_FEE
+            self::A_SALE_REF => ERegistry::A_SALE_REF,
+            self::A_UPLINE_REF => ERegistry::A_UPLINE_REF,
+            self::A_OPERATION_REF => ERegistry::A_OPERATION_REF,
+            self::A_STATE => ERegistry::A_STATE,
+            self::A_AMOUNT_TOTAL => ERegistry::A_AMOUNT_TOTAL,
+            self::A_AMOUNT_FEE => ERegistry::A_AMOUNT_FEE
         ];
         $result->from([$as => $tbl], $cols);
 
@@ -103,7 +103,7 @@ class QueryBuilder
         $cols = [
             self::A_CUST_MLM_ID => Cfg::E_SALE_ORDER_A_CUSTOMER_ID
         ];
-        $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asRefReg . '.' . ERegistry::ATTR_SALE_REF;
+        $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asRefReg . '.' . ERegistry::A_SALE_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN customer_entity Order Customer */
@@ -123,7 +123,7 @@ class QueryBuilder
         $cols = [
             self::A_REF_NAME => $exp
         ];
-        $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asRefReg . '.' . ERegistry::ATTR_UPLINE_REF;
+        $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asRefReg . '.' . ERegistry::A_UPLINE_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         return $result;
@@ -135,7 +135,7 @@ class QueryBuilder
         /** @var \Magento\Framework\DB\Select $result */
         $result = $this->getQueryItems();
         /* ... then replace "columns" part with own expression */
-        $value = 'COUNT(' . self::AS_BON_REFERRAL_REG . '.' . ERegistry::ATTR_SALE_REF . ')';
+        $value = 'COUNT(' . self::AS_BON_REFERRAL_REG . '.' . ERegistry::A_SALE_REF . ')';
 
         /**
          * See method \Magento\Framework\DB\Select\ColumnsRenderer::render:

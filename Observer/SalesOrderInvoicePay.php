@@ -43,7 +43,7 @@ class SalesOrderInvoicePay
                     $regState = $registry->getState();
                     if ($regState == EReg::STATE_REGISTERED) {
                         $registry->setState(EReg::STATE_PENDING);
-                        $pk = [EReg::ATTR_SALE_REF => $saleId];
+                        $pk = [EReg::A_SALE_REF => $saleId];
                         $this->repoReg->updateById($pk, $registry);
                     }
                 }

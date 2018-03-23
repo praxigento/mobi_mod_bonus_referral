@@ -20,7 +20,7 @@ class InstallData extends \Praxigento\Core\App\Setup\Data\Base
     {
         $this->_conn->insertArray(
             $this->_resource->getTableName(TypeOperation::ENTITY_NAME),
-            [TypeOperation::ATTR_CODE, TypeOperation::ATTR_NOTE],
+            [TypeOperation::A_CODE, TypeOperation::A_NOTE],
             [
                 [Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY, 'Referral bonus bounty payment.'],
                 [Cfg::CODE_TYPE_OPER_BONUS_REF_FEE, 'Referral bonus fee.']
