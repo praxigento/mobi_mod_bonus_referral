@@ -19,6 +19,6 @@
     }
   },
   "require": {
-    "praxigento/mobi_mod_mage2_bonus_base": "dev-master"
+    "praxigento/mobi_mod_bonus_base": "dev-master"
   }
 }
