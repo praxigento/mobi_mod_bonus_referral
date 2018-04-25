@@ -13,18 +13,20 @@ use Praxigento\BonusReferral\Service\Sale\Calc\Response as AResponse;
  */
 class Calc
 {
+    /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
+    private $daoCust;
+    /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
+    private $daoProd;
     /** @var \Magento\Quote\Model\QuoteFactory */
     private $factQuote;
     /** @var \Magento\Quote\Model\Quote\AddressFactory */
     private $factQuoteAddr;
     /** @var \Praxigento\BonusReferral\Helper\Config */
     private $hlpConfig;
+    /** @var \Praxigento\Core\Api\Helper\Format */
+    private $hlpFormat;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
-    /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
-    private $daoCust;
-    /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
-    private $daoProd;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -32,7 +34,8 @@ class Calc
         \Magento\Quote\Model\Quote\AddressFactory $factQuoteAddr,
         \Magento\Catalog\Api\ProductRepositoryInterface $daoProd,
         \Magento\Customer\Api\CustomerRepositoryInterface $daoCust,
-        \Praxigento\BonusReferral\Helper\Config $hlpConfig
+        \Praxigento\BonusReferral\Helper\Config $hlpConfig,
+        \Praxigento\Core\Api\Helper\Format $hlpFormat
     ) {
         $this->logger = $logger;
         $this->factQuote = $factQuote;
@@ -40,6 +43,7 @@ class Calc
         $this->daoProd = $daoProd;
         $this->daoCust = $daoCust;
         $this->hlpConfig = $hlpConfig;
+        $this->hlpFormat = $hlpFormat;
     }
 
     private function calculateFee($amount)
@@ -51,7 +55,7 @@ class Calc
         $result = $fixed + $amount * $percent;
         $result = ($result < $min) ? $min : $result;
         $result = ($result > $max) ? $max : $result;
-        $result = number_format($result, 2);
+        $result = $this->hlpFormat->toNumber($result);
         return $result;
     }
 
