@@ -10,7 +10,7 @@ namespace Praxigento\BonusReferral\Service\Sale\Register;
  * @method void setDelta(float $data)
  */
 class Response
-    extends \Praxigento\Core\App\Service\Base\Response
+    extends \Praxigento\Core\App\Service\Response
 {
 
 }

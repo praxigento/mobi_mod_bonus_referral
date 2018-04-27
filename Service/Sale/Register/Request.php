@@ -11,7 +11,7 @@ namespace Praxigento\BonusReferral\Service\Sale\Register;
  * @method void setSaleOrder(\Magento\Sales\Model\Order $data)
  */
 class Request
-    extends \Praxigento\Core\App\Service\Base\Request
+    extends \Praxigento\Core\App\Service\Request
 {
 
 }

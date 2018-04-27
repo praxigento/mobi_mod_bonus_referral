@@ -12,7 +12,7 @@ namespace Praxigento\BonusReferral\Service\Sale\Calc;
  * @method void setFee(float $data)
  */
 class Response
-    extends \Praxigento\Core\App\Service\Base\Response
+    extends \Praxigento\Core\App\Service\Response
 {
 
 }
