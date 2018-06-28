@@ -21,12 +21,15 @@ class Collect
     private $hlpDate;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
     /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\A\CreateOperation */
     private $ownOperCreate;
     /** @var \Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query\GetRegistered */
     private $qbGetRegs;
 
     public function __construct(
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusReferral\Repo\Dao\Registry $daoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\Core\Api\Helper\Date $hlpDate,
@@ -34,6 +37,7 @@ class Collect
         QBGetRegs $qbGetRegs,
         \Praxigento\BonusReferral\Service\Bonus\Collect\A\CreateOperation $ownOperCreate
     ) {
+        $this->logger = $logger;
         $this->daoReg = $daoReg;
         $this->hlpConfig = $hlpConfig;
         $this->hlpDate = $hlpDate;
@@ -58,11 +62,16 @@ class Collect
         if ($isEnabled) {
             $dateFrom = $this->getDateFrom();
             $registered = $this->getRegistered($dateFrom);
+            $total = count($registered);
+            $this->logger->info("There are '$total' registered bonus from '$dateFrom'.");
             foreach ($registered as $item) {
                 $custId = $item[QBGetRegs::A_CUST_ID];
                 $saleId = $item[QBGetRegs::A_SALE_ID];
                 $bonus = $item[QBGetRegs::A_BONUS];
                 $fee = $item[QBGetRegs::A_FEE];
+                $this->logger->info(
+                    "Processing referral bonus for customer #$custId (sale: $saleId). Bonus amount: $bonus; fee: $fee."
+                );
                 $operId = $this->ownOperCreate->exec($saleId, $custId, $bonus, true);
                 /* update status of the referral bonus in registry*/
                 $this->updateRegistry($saleId, $operId);
@@ -71,6 +80,9 @@ class Collect
                     $this->ownOperCreate->exec($saleId, $custId, $fee, false);
                 }
             }
+        } else {
+            $this->logger->warning("Referral bonus is disabled. Please, enable it in "
+                . "'Store / Config / MOBI / Downline / Referral Bonus'.");
         }
         /** compose result */
         $result = new AResponse();
