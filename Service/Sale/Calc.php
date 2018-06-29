@@ -7,6 +7,7 @@ namespace Praxigento\BonusReferral\Service\Sale;
 
 use Praxigento\BonusReferral\Service\Sale\Calc\Request as ARequest;
 use Praxigento\BonusReferral\Service\Sale\Calc\Response as AResponse;
+use Praxigento\Warehouse\Api\Data\Catalog\Product as AWrhsProd;
 
 /**
  * Internal service (module level) to calculate referral bonus amount & processing fee.
@@ -25,6 +26,8 @@ class Calc
     private $hlpConfig;
     /** @var \Praxigento\Core\Api\Helper\Format */
     private $hlpFormat;
+    /** @var \Praxigento\Warehouse\Helper\PriceLoader */
+    private $hlpPriceLoader;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
 
@@ -35,7 +38,8 @@ class Calc
         \Magento\Catalog\Api\ProductRepositoryInterface $daoProd,
         \Magento\Customer\Api\CustomerRepositoryInterface $daoCust,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
-        \Praxigento\Core\Api\Helper\Format $hlpFormat
+        \Praxigento\Core\Api\Helper\Format $hlpFormat,
+        \Praxigento\Warehouse\Helper\PriceLoader $hlpPriceLoader
     ) {
         $this->logger = $logger;
         $this->factQuote = $factQuote;
@@ -44,6 +48,7 @@ class Calc
         $this->daoCust = $daoCust;
         $this->hlpConfig = $hlpConfig;
         $this->hlpFormat = $hlpFormat;
+        $this->hlpPriceLoader = $hlpPriceLoader;
     }
 
     private function calculateFee($amount)
@@ -81,8 +86,14 @@ class Calc
             /* init quote items */
             $items = $sale->getItemsCollection();
             foreach ($items as $item) {
+                /* load product */
                 $prodId = $item->getProductId();
                 $product = $this->daoProd->getById($prodId, false, $storeId, true);
+                /* load group price for upline */
+                list($priceWrhs, $priceWrhsGroup) = $this->hlpPriceLoader->load($prodId, $storeId, $custGroupId);
+                $product->setData(AWrhsProd::A_PRICE_WRHS, $priceWrhs);
+                $product->setData(AWrhsProd::A_PRICE_WRHS_GROUP, $priceWrhsGroup);
+                /* add product to quote */
                 $qty = $item->getQtyOrdered();
                 $quote->addProduct($product, $qty);
             }

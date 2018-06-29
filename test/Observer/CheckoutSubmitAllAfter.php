@@ -18,7 +18,7 @@ class CheckoutSubmitAllAfter
         $this->setAreaCode();
         /** @var \Magento\Sales\Api\OrderRepositoryInterface $daoOrder */
         $daoOrder = $this->manObj->get(\Magento\Sales\Api\OrderRepositoryInterface::class);
-        $sale = $daoOrder->get(49);
+        $sale = $daoOrder->get(1);
         /** @var \Magento\Framework\Event\Observer $event */
         $event = $this->manObj->get(\Magento\Framework\Event\Observer::class);
         $event->setData(AObserver::DATA_ORDER, $sale);

@@ -3,13 +3,13 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
 
     <event name="checkout_submit_all_after">
-        <!-- Register referral bonus for credit cards payments. -->
+        <!-- Register referral bonus. -->
         <observer name="praxigento_bonus_referral_observer"
                   instance="Praxigento\BonusReferral\Observer\CheckoutSubmitAllAfter"/>
     </event>
 
     <event name="sales_order_invoice_pay">
-        <!-- Register referral bonus on invoice payments (check/money order). -->
+        <!-- Change state for registered referral bonus on invoice payments (check/money order). -->
         <observer name="praxigento_bonus_referral_observer"
                   instance="Praxigento\BonusReferral\Observer\SalesOrderInvoicePay"/>
     </event>

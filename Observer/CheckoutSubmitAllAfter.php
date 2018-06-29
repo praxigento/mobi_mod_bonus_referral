@@ -8,8 +8,7 @@ namespace Praxigento\BonusReferral\Observer;
 use Praxigento\BonusReferral\Service\Sale\Register\Request as ARequest;
 
 /**
- * Register referral bonus for credit cards payments.
- * (spacer between Magneto code & MOBI services)
+ * Register referral bonus on sale order checkout.
  */
 class CheckoutSubmitAllAfter
     implements \Magento\Framework\Event\ObserverInterface

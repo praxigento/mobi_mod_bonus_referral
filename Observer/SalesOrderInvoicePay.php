@@ -8,8 +8,7 @@ namespace Praxigento\BonusReferral\Observer;
 use Praxigento\BonusReferral\Repo\Data\Registry as EReg;
 
 /**
- * Register referral bonus on invoice payments (check/money order).
- * (spacer between Magneto code & MOBI services)
+ * Change state for registered referral bonus on invoice payments (check/money order).
  */
 class SalesOrderInvoicePay
     implements \Magento\Framework\Event\ObserverInterface
@@ -38,13 +37,18 @@ class SalesOrderInvoicePay
             try {
                 $sale = $invoice->getOrder();
                 $saleId = $sale->getId();
-                $registry = $this->daoReg->getById($saleId);
-                if ($registry) {
-                    $regState = $registry->getState();
-                    if ($regState == EReg::STATE_REGISTERED) {
-                        $registry->setState(EReg::STATE_PENDING);
-                        $pk = [EReg::A_SALE_REF => $saleId];
-                        $this->daoReg->updateById($pk, $registry);
+                if ($saleId) {
+                    $registry = $this->daoReg->getById($saleId);
+                    if ($registry) {
+                        $regState = $registry->getState();
+                        if ($regState == EReg::STATE_REGISTERED) {
+                            $registry->setState(EReg::STATE_PENDING);
+                            $pk = [EReg::A_SALE_REF => $saleId];
+                            $this->daoReg->updateById($pk, $registry);
+                            $msg = "Sale order #$saleId is paid. "
+                                . EReg::STATE_PENDING . " state is set for related referral bonus.";
+                            $this->logger->info($msg);
+                        }
                     }
                 }
             } catch (\Throwable $e) {
