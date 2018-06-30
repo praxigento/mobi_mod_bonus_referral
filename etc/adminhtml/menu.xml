@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Praxigento_BonusReferral::bonus_referral"
-             title="Bonus Referral"
+             title="Referral"
              translate="title"
              module="Praxigento_BonusReferral"
              sortOrder="500"

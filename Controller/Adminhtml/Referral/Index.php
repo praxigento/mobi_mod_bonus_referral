@@ -16,9 +16,9 @@ class Index
     {
         $aclResource = Cfg::MODULE . '::' . Cfg::ACL_BONUS_REFERRAL;
         $activeMenu = Cfg::MODULE . '::' . Cfg::MENU_BONUS_REFERRAL;
-        $breadcrumbLabel = 'Bonus Referral';
-        $breadcrumbTitle = 'Bonus Referral';
-        $pageTitle = 'Bonus Referral';
+        $breadcrumbLabel = 'Referral Bonus';
+        $breadcrumbTitle = 'Referral Bonus';
+        $pageTitle = 'Referral Bonus';
         parent::__construct(
             $context,
             $aclResource,

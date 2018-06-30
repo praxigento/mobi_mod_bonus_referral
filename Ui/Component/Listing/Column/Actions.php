@@ -11,7 +11,7 @@ namespace Praxigento\BonusReferral\Ui\Component\Listing\Column;
 class Actions
     extends \Magento\Ui\Component\Listing\Columns\Column
 {
-    const A_SALE_REF = \Praxigento\BonusReferral\Ui\DataProvider\Grid\Bonus\Referral\QueryBuilder::A_SALE_REF;
+    const A_SALE_REF = \Praxigento\BonusReferral\Ui\DataProvider\Grid\Bonus\Referral\Referral::A_SALE_REF;
     /**
      * @var \Magento\Framework\UrlInterface
      */
