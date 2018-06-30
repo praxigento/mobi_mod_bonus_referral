@@ -3,6 +3,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- ************ -->
+    <!-- API Services -->
+    <!-- ************ -->
+    <preference for="Praxigento\BonusReferral\Api\Service\Bonus\Collect"
+                type="Praxigento\BonusReferral\Service\Bonus\Collect"/>
+
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->
     <!-- ********************** -->

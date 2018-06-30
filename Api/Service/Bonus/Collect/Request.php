@@ -3,7 +3,7 @@
  *
  */
 
-namespace Praxigento\BonusReferral\Service\Bonus\Collect;
+namespace Praxigento\BonusReferral\Api\Service\Bonus\Collect;
 
 
 /**

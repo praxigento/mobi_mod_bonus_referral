@@ -5,7 +5,7 @@
 
 namespace Praxigento\BonusReferral\Cli;
 
-use Praxigento\BonusReferral\Service\Bonus\Collect\Request as ARequest;
+use Praxigento\BonusReferral\Api\Service\Bonus\Collect\Request as ARequest;
 
 /**
  * Collect and pay referral bonus after delay.

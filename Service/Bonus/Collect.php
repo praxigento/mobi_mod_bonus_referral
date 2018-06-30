@@ -5,13 +5,14 @@
 
 namespace Praxigento\BonusReferral\Service\Bonus;
 
+use Praxigento\BonusReferral\Api\Service\Bonus\Collect\Request as ARequest;
+use Praxigento\BonusReferral\Api\Service\Bonus\Collect\Response as AResponse;
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 use Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query\GetRegistered as QBGetRegs;
-use Praxigento\BonusReferral\Service\Bonus\Collect\Request as ARequest;
-use Praxigento\BonusReferral\Service\Bonus\Collect\Response as AResponse;
 
 class Collect
+    implements \Praxigento\BonusReferral\Api\Service\Bonus\Collect
 {
     /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
     private $daoReg;
@@ -60,10 +61,10 @@ class Collect
         /** perform processing */
         $isEnabled = $this->hlpConfig->getBonusEnabled();
         if ($isEnabled) {
-            $dateFrom = $this->getDateFrom();
-            $registered = $this->getRegistered($dateFrom);
+            $dateUpTo = $this->getDateUpTo();
+            $registered = $this->getRegistered($dateUpTo);
             $total = count($registered);
-            $this->logger->info("There are '$total' registered bonus from '$dateFrom'.");
+            $this->logger->info("There are '$total' registered bonus up to '$dateUpTo'.");
             foreach ($registered as $item) {
                 $custId = $item[QBGetRegs::A_CUST_ID];
                 $saleId = $item[QBGetRegs::A_SALE_ID];
@@ -89,7 +90,7 @@ class Collect
         return $result;
     }
 
-    private function getDateFrom()
+    private function getDateUpTo()
     {
         $delay = $this->hlpConfig->getBonusPayoutDelay();
         $dt = $this->hlpDate->getMageNow();
@@ -100,12 +101,12 @@ class Collect
         return $result;
     }
 
-    private function getRegistered($dateFrom)
+    private function getRegistered($dateUpTo)
     {
         $query = $this->qbGetRegs->build();
         $conn = $query->getConnection();
         $bind = [
-            QBGetRegs::BND_DATE_PAID => $dateFrom
+            QBGetRegs::BND_DATE_PAID => $dateUpTo
         ];
         $result = $conn->fetchAll($query, $bind);
         return $result;
