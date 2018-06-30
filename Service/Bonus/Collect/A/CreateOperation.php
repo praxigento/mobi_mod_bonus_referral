@@ -16,14 +16,18 @@ class CreateOperation
     private $daoAcc;
     /** @var \Praxigento\Accounting\Repo\Dao\Type\Asset */
     private $daoAssetType;
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
     /** @var \Praxigento\Accounting\Api\Service\Operation */
     private $servOper;
 
     public function __construct(
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
         \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType,
         \Praxigento\Accounting\Api\Service\Operation $servOper
     ) {
+        $this->logger = $logger;
         $this->daoAcc = $daoAcc;
         $this->daoAssetType = $daoAssetType;
         $this->servOper = $servOper;
@@ -71,6 +75,12 @@ class CreateOperation
         /** @var ARespOper $resp */
         $resp = $this->servOper->exec($req);
         $result = $resp->getOperationId();
+        if ($isBounty) {
+            $msg = "Referral bonus operation is created (#$result)";
+        } else {
+            $msg = "Referral bonus fee operation is created (#$result)";
+        }
+        $this->logger->info($msg);
         return $result;
     }
 

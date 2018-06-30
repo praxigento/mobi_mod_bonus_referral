@@ -5,6 +5,7 @@
 
 namespace Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query;
 
+use Magento\Sales\Model\Order\Invoice as AInvoice;
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 
@@ -76,7 +77,8 @@ class GetRegistered
         /* query tuning */
         $byDatePaid = "$asInv." . Cfg::E_SALE_INVOICE_A_CREATED_AT . "<=:" . self::BND_DATE_PAID;
         $byState = "$asReg." . ERegistry::A_STATE . "='" . ERegistry::STATE_PENDING . "'";
-        $result->where("($byDatePaid) AND ($byState)");
+        $byInvState = "$asInv." . Cfg::E_SALE_INVOICE_A_STATE . "=" . AInvoice::STATE_PAID;
+        $result->where("($byDatePaid) AND ($byState) AND ($byInvState)");
 
         return $result;
     }

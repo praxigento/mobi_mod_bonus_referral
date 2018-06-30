@@ -47,6 +47,22 @@ class Collect
         $this->ownOperCreate = $ownOperCreate;
     }
 
+    /**
+     * More than one invoice can relate for one sale order. We should not pay bonus twice ore more.
+     *
+     * @param int $saleId
+     * @return bool
+     */
+    private function canProcess($saleId)
+    {
+        $result = false;
+        $entity = $this->daoReg->getById($saleId);
+        if ($entity) {
+            $state = $entity->getState();
+            $result = ($state == ERegistry::STATE_PENDING);
+        }
+        return $result;
+    }
 
     /**
      * @param ARequest $request
@@ -73,12 +89,17 @@ class Collect
                 $this->logger->info(
                     "Processing referral bonus for customer #$custId (sale: $saleId). Bonus amount: $bonus; fee: $fee."
                 );
-                $operId = $this->ownOperCreate->exec($saleId, $custId, $bonus, true);
-                /* update status of the referral bonus in registry*/
-                $this->updateRegistry($saleId, $operId);
-                /* referral bonus fee */
-                if (abs($fee) > Cfg::DEF_ZERO) {
-                    $this->ownOperCreate->exec($saleId, $custId, $fee, false);
+                $canProcess = $this->canProcess($saleId);
+                if ($canProcess) {
+                    $operId = $this->ownOperCreate->exec($saleId, $custId, $bonus, true);
+                    /* update status of the referral bonus in registry*/
+                    $this->updateRegistry($saleId, $operId);
+                    /* referral bonus fee */
+                    if (abs($fee) > Cfg::DEF_ZERO) {
+                        $this->ownOperCreate->exec($saleId, $custId, $fee, false);
+                    }
+                } else {
+                    $this->logger->info("Cannot process referral bonus for sale #$saleId. Wrong state in registry.");
                 }
             }
         } else {
