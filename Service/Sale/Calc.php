@@ -77,6 +77,7 @@ class Calc
             $customer = $this->daoCust->getById($custId);
             $custGroupId = $customer->getGroupId();
             $storeId = $sale->getStoreId();
+            $saleId = $sale->getId();
             /* init quote itself */
             /** @var \Magento\Quote\Model\Quote $quote */
             $quote = $this->factQuote->create();
@@ -109,7 +110,7 @@ class Calc
             $baseAmntCust = $sale->getBaseSubtotal() - $sale->getBaseDiscountAmount() + $sale->getBaseShippingDiscountAmount();
             $delta = $baseAmntCust - $baseAmntUp;
             $fee = $this->calculateFee($delta);
-
+            $this->logger->debug("Referral bonus calc for sale $saleId (ref - distr = delta; fee): $baseAmntUp - $baseAmntCust = $delta; $fee");
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
