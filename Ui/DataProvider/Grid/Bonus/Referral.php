@@ -6,6 +6,7 @@
 
 namespace Praxigento\BonusReferral\Ui\DataProvider\Grid\Bonus;
 
+use Magento\Sales\Api\Data\OrderInterface as DSaleOrder;
 use Praxigento\Accounting\Config as Cfg;
 use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
 use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
@@ -34,6 +35,7 @@ class Referral
     const A_REF_ID = 'refId';
     const A_REF_MLM_ID = 'refMlmId';
     const A_REF_NAME = 'refName';
+    const A_SALE_INC_ID = 'saleIncId';
     const A_SALE_REF = 'saleRef';
     const A_STATE = 'state';
     /**#@- */
@@ -74,6 +76,7 @@ class Referral
                 self::A_REF_MLM_ID => self::AS_REF_DWNL . '.' . EDwnlCust::A_MLM_ID,
                 self::A_REF_NAME => $this->getExpForRefName(),
                 self::A_SALE_REF => self::AS_REF_REG . '.' . ERegistry::A_SALE_REF,
+                self::A_SALE_INC_ID => self::AS_SALES_ORDER . '.' . DSaleOrder::INCREMENT_ID,
                 self::A_STATE => self::AS_REF_REG . '.' . ERegistry::A_STATE,
             ];
             $this->mapper = new \Praxigento\Core\App\Repo\Query\Criteria\Def\Mapper($map);
@@ -110,7 +113,8 @@ class Referral
         $tbl = $this->resource->getTableName(Cfg::ENTITY_MAGE_SALES_ORDER);
         $as = $asSalesOrder;
         $cols = [
-            self::A_REF_ID => Cfg::E_SALE_ORDER_A_CUSTOMER_ID
+            self::A_REF_ID => DSaleOrder::CUSTOMER_ID,
+            self::A_SALE_INC_ID => DSaleOrder::INCREMENT_ID
         ];
         $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID . '=' . $asReg . '.' . ERegistry::A_SALE_REF;
         $result->joinLeft([$as => $tbl], $cond, $cols);

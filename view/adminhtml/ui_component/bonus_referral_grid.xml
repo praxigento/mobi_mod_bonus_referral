@@ -133,6 +133,16 @@
                 </item>
             </argument>
         </column>
+        <column name="saleIncId">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">number</item>
+                    <item name="filter" xsi:type="string">textRange</item>
+                    <item name="sorting" xsi:type="string">desc</item>
+                    <item name="label" xsi:type="string" translate="true">Sale Inc. ID</item>
+                </item>
+            </argument>
+        </column>
         <column name="custId">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
