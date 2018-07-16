@@ -84,7 +84,8 @@ class Register
         $amountBase = round($amountBase, 2);
         $feeBase = $curr->convert($fee, $curBase);
         $feeBase = round($feeBase, 2);
-
+        $saleId = $sale->getId();
+        $this->logger->debug("Sale $saleId ref. bonus conversion (amnt/fee): $amount/$fee => $amountBase/$feeBase.");
         return [$amountBase, $feeBase];
     }
 
