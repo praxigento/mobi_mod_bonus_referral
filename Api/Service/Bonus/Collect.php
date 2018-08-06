@@ -14,12 +14,9 @@ use Praxigento\BonusReferral\Api\Service\Bonus\Collect\Response as AResponse;
  */
 interface Collect
 {
-
-
     /**
      * @param ARequest $request
      * @return AResponse
-     * @throws \Exception
      */
     public function exec($request);
 

@@ -8,6 +8,9 @@
     <!-- ************ -->
     <preference for="Praxigento\BonusReferral\Api\Service\Bonus\Collect"
                 type="Praxigento\BonusReferral\Service\Bonus\Collect"/>
+    <!-- override service from PV module to account PV from referral order to the sponsor of the customer. -->
+    <preference for="Praxigento\Pv\Api\Service\Sale\Account\Pv"
+                type="Praxigento\BonusReferral\Service\Sale\Account\Pv"/>
 
     <!-- ********************** -->
     <!-- Console (CLI Commands) -->
