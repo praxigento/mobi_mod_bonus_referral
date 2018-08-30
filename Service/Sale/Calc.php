@@ -110,7 +110,7 @@ class Calc
             $baseAmntCust = $sale->getBaseSubtotal() - $sale->getBaseDiscountAmount() + $sale->getBaseShippingDiscountAmount();
             $delta = $baseAmntCust - $baseAmntUp;
             $fee = $this->calculateFee($delta);
-            $this->logger->debug("Referral bonus calc for sale $saleId (ref - distr = delta; fee): $baseAmntUp - $baseAmntCust = $delta; $fee");
+            $this->logger->info("Referral bonus calc for sale $saleId (ref - distr = delta; fee): $baseAmntUp - $baseAmntCust = $delta; $fee");
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }

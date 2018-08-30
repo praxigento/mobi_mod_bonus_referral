@@ -1,17 +1,14 @@
 <?php
 /**
- * User: Alex Gusev <alex@flancer64.com>
+ * Authors: Alex Gusev <alex@flancer64.com>
+ * Since: 2018
  */
 
-namespace Praxigento\BonusReferral\Observer;
+namespace Praxigento\BonusReferral\Plugin\Praxigento\Pv\Observer;
 
 use Praxigento\BonusReferral\Service\Sale\Register\Request as ARequest;
 
-/**
- * Register referral bonus on sale order checkout.
- */
-class CheckoutSubmitAllAfter
-    implements \Magento\Framework\Event\ObserverInterface
+class SalesModelServiceQuoteSubmitSuccess
 {
     /* Names for the items in the event's data */
     const DATA_ORDER = 'order';
@@ -29,20 +26,21 @@ class CheckoutSubmitAllAfter
         $this->servReg = $servReg;
     }
 
-    public function execute(\Magento\Framework\Event\Observer $observer)
-    {
-        /** @var \Magento\Sales\Model\Order $sale */
+    public function beforeExecute(
+        \Praxigento\Pv\Observer\SalesModelServiceQuoteSubmitSuccess $subject,
+        \Magento\Framework\Event\Observer $observer
+    ) {
         $sale = $observer->getData(self::DATA_ORDER);
         try {
-            $this->logger->debug("Register referral bonus on checkout.");
+            $this->logger->info("Register referral bonus on checkout.");
             $req = new ARequest();
             $req->setSaleOrder($sale);
             $this->servReg->exec($req);
         } catch (\Throwable $e) {
-            /* catch all exceptions and steal them */
+            /* catch all exceptions and stealth them */
             $msg = 'Error is occurred on referral bonus registration. Error: ' . $e->getMessage();
             $this->logger->error($msg);
         }
+        /* return nothing to use original input arguments */
     }
-
 }

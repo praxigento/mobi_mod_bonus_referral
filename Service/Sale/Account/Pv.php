@@ -65,14 +65,12 @@ class Pv
         list($isReferralSale, $parentId) = $this->getReferralSaleData($saleId);
         if (is_null($customerId)) {
             $customerId = $saleCustId;
-            if ($isReferralSale) {
-                $customerId = $parentId;
-            }
         }
-        if (!is_null($customerId)) {
-            $mlmId = $this->getMlmId($customerId);
+        if (!is_null($customerId) || $isReferralSale) {
             if ($isReferralSale) {
+                $mlmId = $this->getMlmId($customerId);
                 $note = "PV for referral sale #$saleIncId (cust.: $mlmId)";
+                $customerId = $parentId;
             } else {
                 $note = "PV for sale #$saleIncId";
             }
@@ -114,29 +112,15 @@ class Pv
         return $result;
     }
 
-    private function getReferralParentId($saleId)
-    {
-        /* get referral customer ID */
-        $entity = $this->daoGeneric->getEntityByPk(
-            Cfg::ENTITY_MAGE_SALES_ORDER,
-            [Cfg::E_COMMON_A_ENTITY_ID => $saleId],
-            [Cfg::E_SALE_ORDER_A_CUSTOMER_ID]
-        );
-        $custId = $entity[Cfg::E_SALE_ORDER_A_CUSTOMER_ID];
-        /* get parent ID */
-        $entity = $this->daoDwnlCust->getById($custId);
-        $result = $entity->getParentId();
-        return $result;
-    }
-
     private function getReferralSaleData($saleId)
     {
         $isReferralSale = false;
         $parentId = null;
-        $entity = $this->daoRefReg->getById($saleId);
-        if ($entity) {
+        $regSale = $this->daoRefReg->getById($saleId);
+        if ($regSale) {
+            /* branch for bank transfer payments */
             $isReferralSale = true;
-            $parentId = $entity->getUplineRef();
+            $parentId = $regSale->getUplineRef();
         }
         return [$isReferralSale, $parentId];
     }
@@ -150,11 +134,12 @@ class Pv
     private function getSaleOrderData($saleId)
     {
         /* get referral customer ID */
-        $entity = $this->daoGeneric->getEntityByPk(
-            Cfg::ENTITY_MAGE_SALES_ORDER,
-            [Cfg::E_COMMON_A_ENTITY_ID => $saleId],
-            [Cfg::E_SALE_ORDER_A_CUSTOMER_ID, Cfg::E_SALE_ORDER_A_INCREMENT_ID]
-        );
+        $pkey = [Cfg::E_COMMON_A_ENTITY_ID => $saleId];
+        $cols = [
+            Cfg::E_SALE_ORDER_A_CUSTOMER_ID,
+            Cfg::E_SALE_ORDER_A_INCREMENT_ID
+        ];
+        $entity = $this->daoGeneric->getEntityByPk(Cfg::ENTITY_MAGE_SALES_ORDER, $pkey, $cols);
         $custId = $entity[Cfg::E_SALE_ORDER_A_CUSTOMER_ID];
         $incId = $entity[Cfg::E_SALE_ORDER_A_INCREMENT_ID];
         return [$custId, $incId];

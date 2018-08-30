@@ -85,7 +85,7 @@ class Register
         $feeBase = $curr->convert($fee, $curBase);
         $feeBase = round($feeBase, 2);
         $saleId = $sale->getId();
-        $this->logger->debug("Sale $saleId ref. bonus conversion (amnt/fee): $amount/$fee => $amountBase/$feeBase.");
+        $this->logger->info("Sale $saleId ref. bonus conversion (amnt/fee): $amount/$fee => $amountBase/$feeBase.");
         return [$amountBase, $feeBase];
     }
 
@@ -107,7 +107,7 @@ class Register
                 ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
             if ($amount > 0) {
                 $this->registerBonus($saleId, $uplineId, $amount, $fee, $state);
-                $this->logger->debug("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
+                $this->logger->info("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
             }
         }
         /** compose result */
