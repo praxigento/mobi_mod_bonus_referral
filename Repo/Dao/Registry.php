@@ -64,4 +64,15 @@ class Registry
         return $result;
     }
 
+    public function getByOperationId($id)
+    {
+        $result = false;
+        $where = Entity::A_OPERATION_REF . '=' . (int)$id;
+        $rs = $this->get($where);
+        if ($rs) {
+            $result = reset($rs);
+        }
+        return $result;
+    }
+
 }
