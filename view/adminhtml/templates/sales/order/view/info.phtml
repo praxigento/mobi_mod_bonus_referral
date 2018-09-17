@@ -1,0 +1,39 @@
+<?php
+/** @var \Praxigento\BonusReferral\Block\Adminhtml\Sales\Order\View\Info $block */
+?>
+<?php if ($block->hasBonus()): ?>
+    <tr>
+        <th colspan="2"><b><?= $block->escapeHtml(__('Referral bonus')) ?></b></th>
+    </tr>
+    <tr>
+        <th><?= $block->escapeHtml(__('Upline Name')) ?></th>
+        <td>
+            <a href="<?= $block->getUplineViewUrl() ?>">
+                <?= $block->getUplineName() ?>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th><?= $block->escapeHtml(__('Upline MLM ID')) ?></th>
+        <td><?= $block->getUplineMlmId() ?></td>
+    </tr>
+    <tr>
+        <th><?= $block->escapeHtml(__('Bonus amount')) ?></th>
+        <td><?= $block->getAmountTotal() ?></td>
+    </tr>
+    <tr>
+        <th><?= $block->escapeHtml(__('Processing fee')) ?></th>
+        <td><?= $block->getAmountFee() ?></td>
+    </tr>
+    <tr>
+        <th><?= $block->escapeHtml(__('State')) ?></th>
+        <td><?= $block->getState() ?></td>
+    </tr>
+    <?php $operId = $block->getOperationId(); ?>
+    <?php if ($operId) : ?>
+        <tr>
+            <th><?= $block->escapeHtml(__('Operation ID')) ?></th>
+            <td><?= $operId ?></td>
+        </tr>
+    <?php endif; ?>
+<?php endif; ?>
