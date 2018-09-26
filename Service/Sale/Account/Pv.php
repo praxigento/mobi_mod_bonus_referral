@@ -6,8 +6,8 @@
 
 namespace Praxigento\BonusReferral\Service\Sale\Account;
 
-use Praxigento\Accounting\Api\Service\Account\Get\Request as AAccountGetRequest;
-use Praxigento\Accounting\Api\Service\Operation\Request as AOperationRequest;
+use Praxigento\Accounting\Api\Service\Account\Get\Request as AnAccountGetRequest;
+use Praxigento\Accounting\Api\Service\Operation\Request as AnOperationRequest;
 use Praxigento\Accounting\Repo\Data\Transaction as ATransaction;
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\Pv\Api\Service\Sale\Account\Pv\Request as ARequest;
@@ -75,17 +75,17 @@ class Pv
                 $note = "PV for sale #$saleIncId";
             }
             /* get PV account data for customer */
-            $reqGetAccCust = new AAccountGetRequest();
+            $reqGetAccCust = new AnAccountGetRequest();
             $reqGetAccCust->setCustomerId($customerId);
             $reqGetAccCust->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
             $respGetAccCust = $this->servAccount->exec($reqGetAccCust);
             /* get PV account data for system */
-            $reqGetAccSys = new AAccountGetRequest();
+            $reqGetAccSys = new AnAccountGetRequest();
             $reqGetAccSys->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
             $reqGetAccSys->setIsSystem(TRUE);
             $respGetAccSys = $this->servAccount->exec($reqGetAccSys);
             /* create one operation with one transaction */
-            $reqAddOper = new AOperationRequest();
+            $reqAddOper = new AnOperationRequest();
             $reqAddOper->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_SALE_PAID);
             $reqAddOper->setOperationNote($note);
             $trans = [
@@ -101,6 +101,7 @@ class Pv
             $result->setOperationId($operId);
             $result->markSucceed();
         } else {
+            /* should we throw exception here or just log the error? */
         }
         return $result;
     }
