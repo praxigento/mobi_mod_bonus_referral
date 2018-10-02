@@ -5,8 +5,8 @@
 
 namespace Praxigento\BonusReferral\Service\Bonus\Collect\A;
 
-use Praxigento\Accounting\Api\Service\Operation\Request as AReqOper;
-use Praxigento\Accounting\Api\Service\Operation\Response as ARespOper;
+use Praxigento\Accounting\Api\Service\Operation\Create\Request as AReqOper;
+use Praxigento\Accounting\Api\Service\Operation\Create\Response as ARespOper;
 use Praxigento\Accounting\Repo\Data\Transaction as ETrans;
 use Praxigento\BonusReferral\Config as Cfg;
 
@@ -18,14 +18,14 @@ class CreateOperation
     private $daoAssetType;
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
-    /** @var \Praxigento\Accounting\Api\Service\Operation */
+    /** @var \Praxigento\Accounting\Api\Service\Operation\Create */
     private $servOper;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Accounting\Repo\Dao\Account $daoAcc,
         \Praxigento\Accounting\Repo\Dao\Type\Asset $daoAssetType,
-        \Praxigento\Accounting\Api\Service\Operation $servOper
+        \Praxigento\Accounting\Api\Service\Operation\Create $servOper
     ) {
         $this->logger = $logger;
         $this->daoAcc = $daoAcc;

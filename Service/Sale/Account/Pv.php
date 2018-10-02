@@ -7,7 +7,7 @@
 namespace Praxigento\BonusReferral\Service\Sale\Account;
 
 use Praxigento\Accounting\Api\Service\Account\Get\Request as AnAccountGetRequest;
-use Praxigento\Accounting\Api\Service\Operation\Request as AnOperationRequest;
+use Praxigento\Accounting\Api\Service\Operation\Create\Request as AnOperationRequest;
 use Praxigento\Accounting\Repo\Data\Transaction as ATransaction;
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\Pv\Api\Service\Sale\Account\Pv\Request as ARequest;
@@ -29,7 +29,7 @@ class Pv
     private $daoSale;
     /** @var  \Praxigento\Accounting\Api\Service\Account\Get */
     private $servAccount;
-    /** @var \Praxigento\Accounting\Api\Service\Operation */
+    /** @var \Praxigento\Accounting\Api\Service\Operation\Create */
     private $servOper;
 
     public function __construct(
@@ -38,7 +38,7 @@ class Pv
         \Praxigento\Pv\Repo\Dao\Sale $daoSale,
         \Praxigento\BonusReferral\Repo\Dao\Registry $daoRefReg,
         \Praxigento\Accounting\Api\Service\Account\Get $servAccount,
-        \Praxigento\Accounting\Api\Service\Operation $servOper
+        \Praxigento\Accounting\Api\Service\Operation\Create $servOper
     ) {
         $this->daoGeneric = $daoGeneric;
         $this->daoDwnlCust = $daoDwnlCust;
