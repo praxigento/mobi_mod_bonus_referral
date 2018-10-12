@@ -19,6 +19,8 @@ use Praxigento\Pv\Api\Service\Sale\Account\Pv\Response as AResponse;
 class Pv
     implements \Praxigento\Pv\Api\Service\Sale\Account\Pv
 {
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $daoDwnlCust;
     /** @var \Praxigento\Core\Api\App\Repo\Generic */
@@ -33,6 +35,7 @@ class Pv
     private $servOper;
 
     public function __construct(
+        \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
         \Praxigento\Pv\Repo\Dao\Sale $daoSale,
@@ -40,6 +43,7 @@ class Pv
         \Praxigento\Accounting\Api\Service\Account\Get $servAccount,
         \Praxigento\Accounting\Api\Service\Operation\Create $servOper
     ) {
+        $this->logger = $logger;
         $this->daoGeneric = $daoGeneric;
         $this->daoDwnlCust = $daoDwnlCust;
         $this->daoSale = $daoSale;
@@ -59,49 +63,58 @@ class Pv
         $customerId = $request->getCustomerId();
         $dateApplied = $request->getDateApplied();
         $sale = $this->daoSale->getById($saleId);
-        $pvTotal = $sale->getTotal();
-        /* get sale order data */
-        list($saleCustId, $saleIncId) = $this->getSaleOrderData($saleId);
-        list($isReferralSale, $parentId) = $this->getReferralSaleData($saleId);
-        if (is_null($customerId)) {
-            $customerId = $saleCustId;
-        }
-        if (!is_null($customerId) || $isReferralSale) {
-            if ($isReferralSale) {
-                $mlmId = $this->getMlmId($customerId);
-                $note = "PV for referral sale #$saleIncId (cust.: $mlmId)";
-                $customerId = $parentId;
-            } else {
-                $note = "PV for sale #$saleIncId";
+        $tranId = $sale->getTransRef();
+        if (is_null($tranId)) {
+            $pvTotal = $sale->getTotal();
+            /* get sale order data */
+            list($saleCustId, $saleIncId) = $this->getSaleOrderData($saleId);
+            list($isReferralSale, $parentId) = $this->getReferralSaleData($saleId);
+            if (is_null($customerId)) {
+                $customerId = $saleCustId;
             }
-            /* get PV account data for customer */
-            $reqGetAccCust = new AnAccountGetRequest();
-            $reqGetAccCust->setCustomerId($customerId);
-            $reqGetAccCust->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
-            $respGetAccCust = $this->servAccount->exec($reqGetAccCust);
-            /* get PV account data for system */
-            $reqGetAccSys = new AnAccountGetRequest();
-            $reqGetAccSys->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
-            $reqGetAccSys->setIsSystem(TRUE);
-            $respGetAccSys = $this->servAccount->exec($reqGetAccSys);
-            /* create one operation with one transaction */
-            $reqAddOper = new AnOperationRequest();
-            $reqAddOper->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_SALE_PAID);
-            $reqAddOper->setOperationNote($note);
-            $trans = [
-                ATransaction::A_DEBIT_ACC_ID => $respGetAccSys->getId(),
-                ATransaction::A_CREDIT_ACC_ID => $respGetAccCust->getId(),
-                ATransaction::A_VALUE => $pvTotal,
-                ATransaction::A_DATE_APPLIED => $dateApplied,
-                ATransaction::A_NOTE => $note
-            ];
-            $reqAddOper->setTransactions([$trans]);
-            $respAddOper = $this->servOper->exec($reqAddOper);
-            $operId = $respAddOper->getOperationId();
-            $result->setOperationId($operId);
-            $result->markSucceed();
+            if (!is_null($customerId) || $isReferralSale) {
+                if ($isReferralSale) {
+                    $mlmId = $this->getMlmId($customerId);
+                    $note = "PV for referral sale #$saleIncId (cust.: $mlmId)";
+                    $customerId = $parentId;
+                } else {
+                    $note = "PV for sale #$saleIncId";
+                }
+                /* get PV account data for customer */
+                $reqGetAccCust = new AnAccountGetRequest();
+                $reqGetAccCust->setCustomerId($customerId);
+                $reqGetAccCust->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
+                $respGetAccCust = $this->servAccount->exec($reqGetAccCust);
+                /* get PV account data for system */
+                $reqGetAccSys = new AnAccountGetRequest();
+                $reqGetAccSys->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
+                $reqGetAccSys->setIsSystem(TRUE);
+                $respGetAccSys = $this->servAccount->exec($reqGetAccSys);
+                /* create one operation with one transaction */
+                $reqAddOper = new AnOperationRequest();
+                $reqAddOper->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_SALE_PAID);
+                $reqAddOper->setOperationNote($note);
+                $trans = [
+                    ATransaction::A_DEBIT_ACC_ID => $respGetAccSys->getId(),
+                    ATransaction::A_CREDIT_ACC_ID => $respGetAccCust->getId(),
+                    ATransaction::A_VALUE => $pvTotal,
+                    ATransaction::A_DATE_APPLIED => $dateApplied,
+                    ATransaction::A_NOTE => $note
+                ];
+                $reqAddOper->setTransactions([$trans]);
+                $respAddOper = $this->servOper->exec($reqAddOper);
+                $operId = $respAddOper->getOperationId();
+                $tranIds = $respAddOper->getTransactionsIds();
+                $tranId = reset($tranIds);
+                $sale->setTransRef($tranId);
+                $this->daoSale->updateById($saleId, $sale);
+                $result->setOperationId($operId);
+                $result->markSucceed();
+            } else {
+                /* should we throw exception here or just log the error? */
+            }
         } else {
-            /* should we throw exception here or just log the error? */
+            $this->logger->error("PV accounting error: there is transaction #$tranId for sale #$saleId.");
         }
         return $result;
     }
