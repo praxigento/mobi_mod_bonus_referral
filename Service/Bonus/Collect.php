@@ -114,7 +114,7 @@ class Collect
     private function getDateUpTo()
     {
         $delay = $this->hlpConfig->getBonusPayoutDelay();
-        $dt = $this->hlpDate->getMageNow();
+        $dt = $this->hlpDate->getUtcNow();
         $ts = $dt->getTimestamp();
         $ts -= ($delay * 3600 * 24);
         $dt->setTimestamp($ts);
