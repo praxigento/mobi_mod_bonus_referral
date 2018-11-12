@@ -28,9 +28,9 @@
     <!-- ******* -->
     <type name="Praxigento\Pv\Observer\SalesModelServiceQuoteSubmitSuccess">
         <!-- Register referral sale before PV accounting. -->
-        <plugin name="prxgt_pv_plugin"
+        <plugin name="prxgt_bon_ref_plugin"
                 type="Praxigento\BonusReferral\Plugin\Praxigento\Pv\Observer\SalesModelServiceQuoteSubmitSuccess"
-                sortOrder="500" disabled="false"/>
+                sortOrder="800" disabled="false"/>
     </type>
 
 </config>
