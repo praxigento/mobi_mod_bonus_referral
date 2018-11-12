@@ -53,12 +53,12 @@ class CreateOperation
         $trans = [];
         $tranBonus = new ETrans();
         if ($isBounty) {
-            $note = "Ref. bonus bounty for sale order #$saleInc ($referral).";
+            $note = "Referral bonus for order #$saleInc by $referral.";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY;
             $accDebit = $accIdSys;
             $accCredit = $accIdCust;
         } else {
-            $note = "Ref. bonus fee for sale order #$saleInc ($referral).";
+            $note = "Referral bonus fee for order #$saleInc by $referral.";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_FEE;
             $accDebit = $accIdCust;
             $accCredit = $accIdSys;
