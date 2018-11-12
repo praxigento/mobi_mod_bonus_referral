@@ -34,14 +34,16 @@ class CreateOperation
     }
 
     /**
-     * @param int $saleId
-     * @param int $custId
+     * @param int $saleId internal ID for sale order
+     * @param string $saleInc incremental ID for sale order
+     * @param int $custId internal ID of the sponsor (for whom the bonus is paid)
+     * @param string $referral name of the customer that composed the order
      * @param float $amount bounty or fee value (positive)
      * @param bool $isBounty 'true' - pay $amount to customer, 'false' - pay fee from customer account
      * @return int operation ID
      * @throws \Exception
      */
-    public function exec($saleId, $custId, $amount, $isBounty)
+    public function exec($saleId, $saleInc, $custId, $referral, $amount, $isBounty)
     {
         $assetTypeId = $this->daoAssetType->getIdByCode(Cfg::CODE_TYPE_ASSET_WALLET);
         $accIdSys = $this->daoAcc->getSystemAccountId($assetTypeId);
@@ -51,12 +53,12 @@ class CreateOperation
         $trans = [];
         $tranBonus = new ETrans();
         if ($isBounty) {
-            $note = "Ref. bonus bounty for sale order #$saleId.";
+            $note = "Ref. bonus bounty for sale order #$saleInc ($referral).";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY;
             $accDebit = $accIdSys;
             $accCredit = $accIdCust;
         } else {
-            $note = "Ref. bonus fee for sale order #$saleId.";
+            $note = "Ref. bonus fee for sale order #$saleInc ($referral).";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_FEE;
             $accDebit = $accIdCust;
             $accCredit = $accIdSys;

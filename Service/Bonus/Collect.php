@@ -82,21 +82,23 @@ class Collect
             $total = count($registered);
             $this->logger->info("There are '$total' registered bonus up to '$dateUpTo'.");
             foreach ($registered as $item) {
-                $custId = $item[QBGetRegs::A_CUST_ID];
-                $saleId = $item[QBGetRegs::A_SALE_ID];
                 $bonus = $item[QBGetRegs::A_BONUS];
+                $custId = $item[QBGetRegs::A_CUST_ID];
                 $fee = $item[QBGetRegs::A_FEE];
+                $referral = $item[QBGetRegs::A_REFERRAL];
+                $saleId = $item[QBGetRegs::A_SALE_ID];
+                $saleIncId = $item[QBGetRegs::A_SALE_INC];
                 $this->logger->info(
-                    "Processing referral bonus for customer #$custId (sale: $saleId). Bonus amount: $bonus; fee: $fee."
+                    "Processing referral bonus for customer #$custId (sale: $saleIncId/$saleId). Bonus amount: $bonus; fee: $fee."
                 );
                 $canProcess = $this->canProcess($saleId);
                 if ($canProcess) {
-                    $operId = $this->ownOperCreate->exec($saleId, $custId, $bonus, true);
+                    $operId = $this->ownOperCreate->exec($saleId, $saleIncId, $custId, $referral, $bonus, true);
                     /* update status of the referral bonus in registry*/
                     $this->updateRegistry($saleId, $operId);
                     /* referral bonus fee */
                     if (abs($fee) > Cfg::DEF_ZERO) {
-                        $this->ownOperCreate->exec($saleId, $custId, $fee, false);
+                        $this->ownOperCreate->exec($saleId, $saleIncId, $custId, $referral, $fee, false);
                     }
                 } else {
                     $this->logger->info("Cannot process referral bonus for sale #$saleId. Wrong state in registry.");
