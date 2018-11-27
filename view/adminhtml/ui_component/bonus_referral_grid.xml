@@ -46,7 +46,8 @@
     <!-- **************************************************** -->
     <columns name="bonus_referral_columns">
 
-        <column name="saleRef">
+        <column name="saleRef"
+                component="Praxigento_Core/js/grid/columns/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
@@ -55,7 +56,8 @@
             </settings>
         </column>
 
-        <column name="saleIncId">
+        <column name="saleIncId"
+                component="Praxigento_Core/js/grid/columns/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
@@ -63,7 +65,8 @@
             </settings>
         </column>
 
-        <column name="custId">
+        <column name="custId"
+                component="Praxigento_Core/js/grid/columns/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
@@ -79,7 +82,8 @@
             </settings>
         </column>
 
-        <column name="custMlmId">
+        <column name="custMlmId"
+                component="Praxigento_Core/js/grid/columns/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
@@ -87,7 +91,8 @@
             </settings>
         </column>
 
-        <column name="refId">
+        <column name="refId"
+                component="Praxigento_Core/js/grid/columns/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
@@ -103,7 +108,8 @@
             </settings>
         </column>
 
-        <column name="refMlmId">
+        <column name="refMlmId"
+                component="Praxigento_Core/js/grid/columns/integer">
             <settings>
                 <dataType>number</dataType>
                 <filter>text</filter>
@@ -112,7 +118,7 @@
         </column>
 
         <column name="amountTotal"
-                component="Praxigento_Core/js/grid/columns/number">
+                component="Praxigento_Core/js/grid/columns/decimal">
             <settings>
                 <dataType>price</dataType>
                 <filter>textRange</filter>
@@ -121,7 +127,7 @@
         </column>
 
         <column name="amountFee"
-                component="Praxigento_Core/js/grid/columns/number">
+                component="Praxigento_Core/js/grid/columns/decimal">
             <settings>
                 <dataType>price</dataType>
                 <filter>textRange</filter>
