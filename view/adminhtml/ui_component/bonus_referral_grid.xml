@@ -111,7 +111,8 @@
             </settings>
         </column>
 
-        <column name="amountTotal">
+        <column name="amountTotal"
+                component="Praxigento_Core/js/grid/columns/number">
             <settings>
                 <dataType>price</dataType>
                 <filter>textRange</filter>
@@ -119,7 +120,8 @@
             </settings>
         </column>
 
-        <column name="amountFee">
+        <column name="amountFee"
+                component="Praxigento_Core/js/grid/columns/number">
             <settings>
                 <dataType>price</dataType>
                 <filter>textRange</filter>
