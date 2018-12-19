@@ -94,14 +94,14 @@ class Pv
                 $reqAddOper = new AnOperationRequest();
                 $reqAddOper->setOperationTypeCode(Cfg::CODE_TYPE_OPER_PV_SALE_PAID);
                 $reqAddOper->setOperationNote($note);
-                $trans = [
-                    ATransaction::A_DEBIT_ACC_ID => $respGetAccSys->getId(),
-                    ATransaction::A_CREDIT_ACC_ID => $respGetAccCust->getId(),
-                    ATransaction::A_VALUE => $pvTotal,
-                    ATransaction::A_DATE_APPLIED => $dateApplied,
-                    ATransaction::A_NOTE => $note
-                ];
-                $reqAddOper->setTransactions([$trans]);
+                $tran = new ATransaction();
+                $tran->setDebitAccId($respGetAccSys->getId());
+                $tran->setCreditAccId($respGetAccCust->getId());
+                $tran->setValue($pvTotal);
+                $tran->setDateApplied($dateApplied);
+                $tran->setNote($note);
+                $trans = [$tran];
+                $reqAddOper->setTransactions($trans);
                 $respAddOper = $this->servOper->exec($reqAddOper);
                 $operId = $respAddOper->getOperationId();
                 $tranIds = $respAddOper->getTransactionsIds();
