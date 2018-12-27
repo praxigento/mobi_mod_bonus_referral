@@ -125,7 +125,7 @@ class Register
     {
         /** @var \Praxigento\Downline\Repo\Data\Customer $entity */
         $entity = $this->daoDwnl->getById($custId);
-        $result = $entity->getParentId();
+        $result = $entity->getParentRef();
         return $result;
     }
 

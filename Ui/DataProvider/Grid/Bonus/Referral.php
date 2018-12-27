@@ -135,7 +135,7 @@ class Referral
         $cols = [
             self::A_REF_MLM_ID => EDwnlCust::A_MLM_ID
         ];
-        $cond = "$as." . EDwnlCust::A_CUSTOMER_ID . "=$asRef." . Cfg::E_CUSTOMER_A_ENTITY_ID;
+        $cond = "$as." . EDwnlCust::A_CUSTOMER_REF . "=$asRef." . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* LEFT JOIN customer_entity as customer (bonus owner)*/
@@ -155,7 +155,7 @@ class Referral
         $cols = [
             self::A_CUST_MLM_ID => EDwnlCust::A_MLM_ID
         ];
-        $cond = "$as." . EDwnlCust::A_CUSTOMER_ID . "=$asCust." . Cfg::E_CUSTOMER_A_ENTITY_ID;
+        $cond = "$as." . EDwnlCust::A_CUSTOMER_REF . "=$asCust." . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         return $result;
