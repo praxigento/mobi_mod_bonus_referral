@@ -78,10 +78,10 @@ class Collect
         $isEnabled = $this->hlpConfig->getBonusEnabled();
         if ($isEnabled) {
             $dateUpTo = $this->getDateUpTo();
-            $registered = $this->getRegistered($dateUpTo);
-            $total = count($registered);
-            $this->logger->info("There are '$total' registered bonus up to '$dateUpTo'.");
-            foreach ($registered as $item) {
+            $paid = $this->getPaid($dateUpTo);
+            $total = count($paid);
+            $this->logger->info("There are '$total' paid sales with unprocessed referral bonus up to '$dateUpTo'.");
+            foreach ($paid as $item) {
                 $bonus = $item[QBGetRegs::A_BONUS];
                 $custId = $item[QBGetRegs::A_CUST_ID];
                 $fee = $item[QBGetRegs::A_FEE];
@@ -124,7 +124,7 @@ class Collect
         return $result;
     }
 
-    private function getRegistered($dateUpTo)
+    private function getPaid($dateUpTo)
     {
         $query = $this->qbGetRegs->build();
         $conn = $query->getConnection();
