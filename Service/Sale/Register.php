@@ -25,6 +25,8 @@ class Register
     private $factCur;
     /** @var \Praxigento\BonusReferral\Helper\Config */
     private $hlpConfig;
+    /** @var \Praxigento\Downline\Api\Helper\Config */
+    private $hlpDwnlCfg;
     /** @var \Praxigento\Warehouse\Api\Helper\Stock */
     private $hlpStock;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
@@ -41,6 +43,7 @@ class Register
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusReferral\Repo\Dao\Registry $daoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
+        \Praxigento\Downline\Api\Helper\Config $hlpDwnlCfg,
         \Praxigento\Warehouse\Api\Helper\Stock $hlpStock,
         \Praxigento\BonusReferral\Service\Sale\Calc $servCalc
     ) {
@@ -50,6 +53,7 @@ class Register
         $this->daoDwnl = $daoDwnl;
         $this->daoReg = $daoReg;
         $this->hlpConfig = $hlpConfig;
+        $this->hlpDwnlCfg = $hlpDwnlCfg;
         $this->hlpStock = $hlpStock;
         $this->servCalc = $servCalc;
     }
@@ -101,13 +105,18 @@ class Register
         /** perform processing */
         $isEnabled = $this->hlpConfig->getBonusEnabled();
         if ($isEnabled) {
-            $uplineId = $this->getUplineId($custId);
-            list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
-            $state = ($saleState == MSaleOrder::STATE_PROCESSING)
-                ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
-            if ($amount > 0) {
-                $this->registerBonus($saleId, $uplineId, $amount, $fee, $state);
-                $this->logger->info("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
+            $distrGroups = $this->hlpDwnlCfg->getDowngradeGroupsDistrs();
+            $groupId = $sale->getCustomerGroupId();
+            $isDistr = in_array($groupId, $distrGroups);
+            if (!$isDistr) {
+                $uplineId = $this->getUplineId($custId);
+                list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
+                $state = ($saleState == MSaleOrder::STATE_PROCESSING)
+                    ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
+                if ($amount > 0) {
+                    $this->registerBonus($saleId, $uplineId, $amount, $fee, $state);
+                    $this->logger->info("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
+                }
             }
         }
         /** compose result */
