@@ -18,6 +18,10 @@
         <td><?= $block->getUplineMlmId() ?></td>
     </tr>
     <tr>
+        <th><?= $block->escapeHtml(__('Sale PV')) ?></th>
+        <td><?= $block->getSalePv() ?></td>
+    </tr>
+    <tr>
         <th><?= $block->escapeHtml(__('Bonus amount')) ?></th>
         <td><?= $block->getAmountTotal() ?></td>
     </tr>

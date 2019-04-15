@@ -21,12 +21,15 @@ class Info
     private $daoDwnlCust;
     /** @var \Praxigento\Core\Api\App\Repo\Generic */
     private $daoGeneric;
+    /** @var \Praxigento\Pv\Repo\Dao\Sale */
+    private $daoPvSale;
     /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
     private $daoRegistry;
 
     public function __construct(
         \Praxigento\Core\Api\App\Repo\Generic $daoGeneric,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnlCust,
+        \Praxigento\Pv\Repo\Dao\Sale $daoPvSale,
         \Praxigento\BonusReferral\Repo\Dao\Registry $daoRegistry,
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
@@ -36,6 +39,7 @@ class Info
         parent::__construct($context, $registry, $adminHelper, $data);
         $this->daoGeneric = $daoGeneric;
         $this->daoDwnlCust = $daoDwnlCust;
+        $this->daoPvSale = $daoPvSale;
         $this->daoRegistry = $daoRegistry;
     }
 
@@ -56,6 +60,19 @@ class Info
     public function getOperationId()
     {
         $result = $this->cacheBonusReg->getOperationRef();
+        return $result;
+    }
+
+    public function getSalePv()
+    {
+        $result = 0;
+        $order = $this->getOrder();
+        $orderId = $order->getId();
+        $found = $this->daoPvSale->getById($orderId);
+        if ($found) {
+            $result = $found->getTotal();
+        }
+        $result = number_format($result, 2);
         return $result;
     }
 
