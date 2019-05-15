@@ -17,8 +17,6 @@ use Praxigento\BonusReferral\Service\Sale\Register\Response as AResponse;
  */
 class Register
 {
-    /** @var \Praxigento\Downline\Repo\Dao\Customer */
-    private $daoDwnl;
     /** @var \Praxigento\BonusReferral\Repo\Dao\Registry */
     private $daoReg;
     /** @var \Magento\Directory\Model\CurrencyFactory */
@@ -27,6 +25,8 @@ class Register
     private $hlpConfig;
     /** @var \Praxigento\Downline\Api\Helper\Config */
     private $hlpDwnlCfg;
+    /** @var \Praxigento\BonusReferral\Api\Helper\Register */
+    private $hlpRegister;
     /** @var \Praxigento\Warehouse\Api\Helper\Stock */
     private $hlpStock;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
@@ -40,20 +40,20 @@ class Register
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Directory\Model\CurrencyFactory $factCur,
         \Praxigento\Core\Api\App\Logger\Main $logger,
-        \Praxigento\Downline\Repo\Dao\Customer $daoDwnl,
         \Praxigento\BonusReferral\Repo\Dao\Registry $daoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\Downline\Api\Helper\Config $hlpDwnlCfg,
+        \Praxigento\BonusReferral\Api\Helper\Register $hlpRegister,
         \Praxigento\Warehouse\Api\Helper\Stock $hlpStock,
         \Praxigento\BonusReferral\Service\Sale\Calc $servCalc
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->factCur = $factCur;
         $this->logger = $logger;
-        $this->daoDwnl = $daoDwnl;
         $this->daoReg = $daoReg;
         $this->hlpConfig = $hlpConfig;
         $this->hlpDwnlCfg = $hlpDwnlCfg;
+        $this->hlpRegister = $hlpRegister;
         $this->hlpStock = $hlpStock;
         $this->servCalc = $servCalc;
     }
@@ -62,18 +62,18 @@ class Register
      * Calculate bonus bounty & fee and convert to the base currency (for WALLET asset).
      *
      * @param \Magento\Sales\Model\Order $sale
-     * @param int $uplineId
+     * @param int $beneficiaryId
      * @return array
      * @throws \Exception
      */
     private function calcAmounts(
         \Magento\Sales\Model\Order $sale,
-        int $uplineId
+        int $beneficiaryId
     ) {
         /* call to service to calculate bonus */
         $req = new ACalcReq();
         $req->setSaleOrder($sale);
-        $req->setUplineId($uplineId);
+        $req->setBeneficiaryId($beneficiaryId);
         /** @var ACalcResp $resp */
         $resp = $this->servCalc->exec($req);
         $amount = $resp->getDelta();
@@ -100,7 +100,6 @@ class Register
         $sale = $request->getSaleOrder();
         $saleId = $sale->getId();
         $saleState = $sale->getState();
-        $custId = $sale->getCustomerId();
 
         /** perform processing */
         $isEnabled = $this->hlpConfig->getBonusEnabled();
@@ -109,12 +108,12 @@ class Register
             $groupId = $sale->getCustomerGroupId();
             $isDistr = in_array($groupId, $distrGroups);
             if (!$isDistr) {
-                $uplineId = $this->getUplineId($custId);
-                list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
+                $beneficiaryId = $this->hlpRegister->getBeneficiaryId($sale);
+                list($amount, $fee) = $this->calcAmounts($sale, $beneficiaryId);
                 $state = ($saleState == MSaleOrder::STATE_PROCESSING)
                     ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
                 if ($amount > 0) {
-                    $this->registerBonus($saleId, $uplineId, $amount, $fee, $state);
+                    $this->registerBonus($saleId, $beneficiaryId, $amount, $fee, $state);
                     $this->logger->info("Referral bonus for order #$saleId is registered (amount: $amount, fee: $fee).");
                 }
             }
@@ -124,19 +123,6 @@ class Register
         return $result;
     }
 
-    /**
-     * Get upline ID for current customer.
-     *
-     * @param int $custId
-     * @return int
-     */
-    private function getUplineId($custId)
-    {
-        /** @var \Praxigento\Downline\Repo\Data\Customer $entity */
-        $entity = $this->daoDwnl->getById($custId);
-        $result = $entity->getParentRef();
-        return $result;
-    }
 
     /**
      * Save new bonus entry in DB.
@@ -146,6 +132,7 @@ class Register
      * @param float $amount
      * @param float $fee
      * @param string $state
+     * @throws \Exception
      */
     private function registerBonus($saleId, $custId, $amount, $fee, $state)
     {

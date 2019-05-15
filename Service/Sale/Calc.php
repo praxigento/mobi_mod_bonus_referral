@@ -68,7 +68,7 @@ class Calc
     {
         /** define local working data */
         assert($request instanceof ARequest);
-        $custId = $request->getUplineId();
+        $custId = $request->getBeneficiaryId();
         /** @var \Magento\Sales\Model\Order $sale */
         $sale = $request->getSaleOrder();
 

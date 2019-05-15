@@ -1,0 +1,19 @@
+<?php
+/**
+ * Authors: Alex Gusev <alex@flancer64.com>
+ * Since: 2019
+ */
+
+namespace Praxigento\BonusReferral\Api\Helper;
+
+
+interface Register
+{
+    /**
+     * Return customer ID for referral bonus beneficiary.
+     *
+     * @param \Magento\Sales\Model\Order $sale
+     * @return int
+     */
+    public function getBeneficiaryId($sale);
+}

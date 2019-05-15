@@ -3,6 +3,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
 
+    <!-- *********** -->
+    <!-- API Helpers -->
+    <!-- *********** -->
+    <preference for="Praxigento\BonusReferral\Api\Helper\Register"
+                type="Praxigento\BonusReferral\Helper\Register"/>
+
     <!-- ************ -->
     <!-- API Services -->
     <!-- ************ -->
