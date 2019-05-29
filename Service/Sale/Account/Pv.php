@@ -132,8 +132,8 @@ class Pv
         $parentId = null;
         $regSale = $this->daoRefReg->getById($saleId);
         if ($regSale) {
-            /* branch for bank transfer payments */
             $isReferralSale = true;
+            /* uplineRef = customerRef if referral has >100 PV in the sale */
             $parentId = $regSale->getUplineRef();
         }
         return [$isReferralSale, $parentId];
