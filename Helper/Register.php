@@ -21,6 +21,11 @@ class Register
         $this->daoDwnl = $daoDwnl;
     }
 
+    /**
+     * Customer's sponsor is referral bonus beneficiary by default.
+     *
+     * @inheritDoc
+     */
     public function getBeneficiaryId($sale)
     {
         $result = null;

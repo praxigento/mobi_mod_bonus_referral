@@ -19,8 +19,6 @@ use Praxigento\Pv\Api\Service\Sale\Account\Pv\Response as AResponse;
 class Pv
     implements \Praxigento\Pv\Api\Service\Sale\Account\Pv
 {
-    /** @var \Psr\Log\LoggerInterface */
-    private $logger;
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $daoDwnlCust;
     /** @var \Praxigento\Core\Api\App\Repo\Generic */
@@ -29,6 +27,8 @@ class Pv
     private $daoRefReg;
     /** @var  \Praxigento\Pv\Repo\Dao\Sale */
     private $daoSale;
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
     /** @var  \Praxigento\Accounting\Api\Service\Account\Get */
     private $servAccount;
     /** @var \Praxigento\Accounting\Api\Service\Operation\Create */
@@ -68,7 +68,8 @@ class Pv
             $pvTotal = $sale->getTotal();
             /* get sale order data */
             list($saleCustId, $saleIncId) = $this->getSaleOrderData($saleId);
-            list($isReferralSale, $parentId) = $this->getReferralSaleData($saleId);
+            /** @var int $beneficiaryId ID of the customer who should get PV for the sale (upline or customer itself) */
+            list($isReferralSale, $beneficiaryId) = $this->getReferralSaleData($saleId);
             if (is_null($customerId)) {
                 $customerId = $saleCustId;
             }
@@ -76,7 +77,7 @@ class Pv
                 if ($isReferralSale) {
                     $mlmId = $this->getMlmId($customerId);
                     $note = "PV for referral sale #$saleIncId (cust.: $mlmId)";
-                    $customerId = $parentId;
+                    $customerId = $beneficiaryId;
                 } else {
                     $note = "PV for sale #$saleIncId";
                 }
@@ -88,7 +89,7 @@ class Pv
                 /* get PV account data for system */
                 $reqGetAccSys = new AnAccountGetRequest();
                 $reqGetAccSys->setAssetTypeCode(Cfg::CODE_TYPE_ASSET_PV);
-                $reqGetAccSys->setIsSystem(TRUE);
+                $reqGetAccSys->setIsSystem(true);
                 $respGetAccSys = $this->servAccount->exec($reqGetAccSys);
                 /* create one operation with one transaction */
                 $reqAddOper = new AnOperationRequest();
@@ -133,7 +134,10 @@ class Pv
         $regSale = $this->daoRefReg->getById($saleId);
         if ($regSale) {
             $isReferralSale = true;
-            /* uplineRef = customerRef if referral has >100 PV in the sale */
+            /*
+             *  uplineRef = customerRef if referral has more than 100 PV in the sale
+             *  (see \Praxigento\Santegra\Helper\BonReferral\Register::getBeneficiaryId)
+             */
             $parentId = $regSale->getUplineRef();
         }
         return [$isReferralSale, $parentId];
