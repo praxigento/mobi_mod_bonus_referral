@@ -13,7 +13,8 @@ interface Register
      * Return customer ID for referral bonus beneficiary (not PV receiver).
      *
      * @param \Magento\Sales\Model\Order $sale
-     * @return int
+     * @return array [beneficiaryId, uplineId]
      */
     public function getBeneficiaryId($sale);
+
 }

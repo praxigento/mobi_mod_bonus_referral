@@ -108,8 +108,8 @@ class Register
             $groupId = $sale->getCustomerGroupId();
             $isDistr = in_array($groupId, $distrGroups);
             if (!$isDistr) {
-                $beneficiaryId = $this->hlpRegister->getBeneficiaryId($sale);
-                list($amount, $fee) = $this->calcAmounts($sale, $beneficiaryId);
+                [$beneficiaryId, $uplineId] = $this->hlpRegister->getBeneficiaryId($sale);
+                list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
                 $state = ($saleState == MSaleOrder::STATE_PROCESSING)
                     ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
                 if ($amount > 0) {

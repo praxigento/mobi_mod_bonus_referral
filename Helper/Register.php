@@ -22,18 +22,18 @@ class Register
     }
 
     /**
-     * Customer's sponsor is referral bonus beneficiary by default.
+     * Customer's sponsor (upline) is referral bonus beneficiary by default.
      *
      * @inheritDoc
      */
     public function getBeneficiaryId($sale)
     {
-        $result = null;
+        $beneficiaryId = $uplineId = null;
         if ($sale instanceof \Magento\Sales\Model\Order) {
             $custId = $sale->getCustomerId();
-            $result = $this->getUplineId($custId);
+            $beneficiaryId = $uplineId = $this->getUplineId($custId);
         }
-        return $result;
+        return [$beneficiaryId, $uplineId];
     }
 
     /**
