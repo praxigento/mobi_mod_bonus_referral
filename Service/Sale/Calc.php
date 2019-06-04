@@ -68,14 +68,15 @@ class Calc
     {
         /** define local working data */
         assert($request instanceof ARequest);
-        $custId = $request->getBeneficiaryId();
+        $bnfId = $request->getBeneficiaryId();
+        $custGroupId = $request->getCustomerGroupId();
         /** @var \Magento\Sales\Model\Order $sale */
         $sale = $request->getSaleOrder();
 
         /** perform processing */
         try {
-            $customer = $this->daoCust->getById($custId);
-            $custGroupId = $customer->getGroupId();
+            $customer = $this->daoCust->getById($bnfId);
+            $custGroupId = $custGroupId ?? $customer->getGroupId();
             $storeId = $sale->getStoreId();
             $saleId = $sale->getId();
             /* init quote itself */
@@ -116,8 +117,12 @@ class Calc
         }
         /** compose result */
         $result = new AResponse();
-        if ($delta) $result->setDelta($delta);
-        if ($fee) $result->setFee($fee);
+        if ($delta) {
+            $result->setDelta($delta);
+        }
+        if ($fee) {
+            $result->setFee($fee);
+        }
         return $result;
     }
 

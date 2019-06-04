@@ -68,12 +68,14 @@ class Register
      */
     private function calcAmounts(
         \Magento\Sales\Model\Order $sale,
-        int $beneficiaryId
+        int $beneficiaryId,
+        int $bnfGroupId
     ) {
         /* call to service to calculate bonus */
         $req = new ACalcReq();
         $req->setSaleOrder($sale);
         $req->setBeneficiaryId($beneficiaryId);
+        $req->setCustomerGroupId($bnfGroupId);
         /** @var ACalcResp $resp */
         $resp = $this->servCalc->exec($req);
         $amount = $resp->getDelta();
@@ -108,8 +110,8 @@ class Register
             $groupId = $sale->getCustomerGroupId();
             $isDistr = in_array($groupId, $distrGroups);
             if (!$isDistr) {
-                [$beneficiaryId, $uplineId] = $this->hlpRegister->getBeneficiaryId($sale);
-                list($amount, $fee) = $this->calcAmounts($sale, $uplineId);
+                [$beneficiaryId, $bnfGroupId] = $this->hlpRegister->getBeneficiaryId($sale);
+                list($amount, $fee) = $this->calcAmounts($sale, $beneficiaryId, $bnfGroupId);
                 $state = ($saleState == MSaleOrder::STATE_PROCESSING)
                     ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
                 if ($amount > 0) {

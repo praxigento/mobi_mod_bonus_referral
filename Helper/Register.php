@@ -14,10 +14,14 @@ class Register
 {
     /** @var \Praxigento\Downline\Repo\Dao\Customer */
     private $daoDwnl;
+    /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
+    private $repoCust;
 
     public function __construct(
+        \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
         \Praxigento\Downline\Repo\Dao\Customer $daoDwnl
     ) {
+        $this->repoCust = $repoCust;
         $this->daoDwnl = $daoDwnl;
     }
 
@@ -28,12 +32,14 @@ class Register
      */
     public function getBeneficiaryId($sale)
     {
-        $beneficiaryId = $uplineId = null;
+        $beneficiaryId = $bnfGroupId = null;
         if ($sale instanceof \Magento\Sales\Model\Order) {
             $custId = $sale->getCustomerId();
-            $beneficiaryId = $uplineId = $this->getUplineId($custId);
+            $beneficiaryId = $this->getUplineId($custId);
+            $beneficiary = $this->repoCust->getById($beneficiaryId);
+            $bnfGroupId = $beneficiary->getGroupId();
         }
-        return [$beneficiaryId, $uplineId];
+        return [$beneficiaryId, $bnfGroupId];
     }
 
     /**
