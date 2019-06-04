@@ -69,21 +69,21 @@ class Calc
         /** define local working data */
         assert($request instanceof ARequest);
         $bnfId = $request->getBeneficiaryId();
-        $custGroupId = $request->getCustomerGroupId();
+        $bnfGroupId = $request->getBeneficiaryGroupId();
         /** @var \Magento\Sales\Model\Order $sale */
         $sale = $request->getSaleOrder();
 
         /** perform processing */
         try {
-            $customer = $this->daoCust->getById($bnfId);
-            $custGroupId = $custGroupId ?? $customer->getGroupId();
+            $beneficiary = $this->daoCust->getById($bnfId);
+            $bnfGroupId = $bnfGroupId ?? $beneficiary->getGroupId();
             $storeId = $sale->getStoreId();
             $saleId = $sale->getId();
             /* init quote itself */
             /** @var \Magento\Quote\Model\Quote $quote */
             $quote = $this->factQuote->create();
             $quote->setStoreId($storeId);
-            $quote->setCustomer($customer);
+            $quote->setCustomer($beneficiary);
             $quote->setCustomerIsGuest(0);
             /* init quote items */
             $items = $sale->getItemsCollection();
@@ -92,7 +92,7 @@ class Calc
                 $prodId = $item->getProductId();
                 $product = $this->daoProd->getById($prodId, false, $storeId, true);
                 /* load group price for upline */
-                list($priceWrhs, $priceWrhsGroup) = $this->hlpPriceLoader->load($prodId, $storeId, $custGroupId);
+                list($priceWrhs, $priceWrhsGroup) = $this->hlpPriceLoader->load($prodId, $storeId, $bnfGroupId);
                 $product->setData(AWrhsProd::A_PRICE_WRHS, $priceWrhs);
                 $product->setData(AWrhsProd::A_PRICE_WRHS_GROUP, $priceWrhsGroup);
                 /* add product to quote */

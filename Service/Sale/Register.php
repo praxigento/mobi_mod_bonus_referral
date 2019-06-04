@@ -75,7 +75,7 @@ class Register
         $req = new ACalcReq();
         $req->setSaleOrder($sale);
         $req->setBeneficiaryId($beneficiaryId);
-        $req->setCustomerGroupId($bnfGroupId);
+        $req->setBeneficiaryGroupId($bnfGroupId);
         /** @var ACalcResp $resp */
         $resp = $this->servCalc->exec($req);
         $amount = $resp->getDelta();
