@@ -85,9 +85,11 @@ class Collect
                 $bonus = $item[QBGetRegs::A_BONUS];
                 $custId = $item[QBGetRegs::A_CUST_ID];
                 $fee = $item[QBGetRegs::A_FEE];
-                $referral = $item[QBGetRegs::A_REFERRAL];
+                $custName = $item[QBGetRegs::A_CUST_NAME];
+                $custMlmId = $item[QBGetRegs::A_CUST_MLM_ID];
                 $saleId = $item[QBGetRegs::A_SALE_ID];
                 $saleIncId = $item[QBGetRegs::A_SALE_INC];
+                $referral = "$custName, #$custMlmId";
                 $this->logger->info(
                     "Processing referral bonus for customer #$custId (sale: $saleIncId/$saleId). Bonus amount: $bonus; fee: $fee."
                 );

@@ -8,6 +8,7 @@ namespace Praxigento\BonusReferral\Service\Bonus\Collect\A\Repo\Query;
 use Magento\Sales\Model\Order\Invoice as AInvoice;
 use Praxigento\BonusReferral\Config as Cfg;
 use Praxigento\BonusReferral\Repo\Data\Registry as ERegistry;
+use Praxigento\Downline\Repo\Data\Customer as EDwnlCust;
 
 /**
  * Query to get data for referral bonus from registry.
@@ -18,6 +19,7 @@ class GetRegistered
 
     /** Tables aliases for external usage ('camelCase' naming) */
     const AS_CUST = 'cust';
+    const AS_DWNL_CUST = 'dwnlCust';
     const AS_INV = 'invoice';
     const AS_ORDR = 'order';
     const AS_REG = 'registry';
@@ -25,9 +27,10 @@ class GetRegistered
     /** Columns/expressions aliases for external usage ('camelCase' naming) */
     const A_BONUS = 'bonus';
     const A_CUST_ID = 'customerId';
+    const A_CUST_MLM_ID = 'custMlmId';
+    const A_CUST_NAME = 'custName';
     const A_DATE_PAID = 'datePaid';
     const A_FEE = 'fee';
-    const A_REFERRAL = 'referral';
     const A_SALE_ID = 'saleId';
     const A_SALE_INC = 'saleInc';
 
@@ -36,6 +39,7 @@ class GetRegistered
 
     /** Entities are used in the query */
     const E_CUSTOMER = Cfg::ENTITY_MAGE_CUSTOMER;
+    const E_DWNL_CUST = EDwnlCust::ENTITY_NAME;
     const E_INVOICE = Cfg::ENTITY_MAGE_SALES_INVOICE;
     const E_ORDER = Cfg::ENTITY_MAGE_SALES_ORDER;
     const E_REGISTRY = ERegistry::ENTITY_NAME;
@@ -49,6 +53,7 @@ class GetRegistered
         $asCust = self::AS_CUST;
         $asInv = self::AS_INV;
         $asOrdr = self::AS_ORDR;
+        $asDwnlCust = self::AS_DWNL_CUST;
         $asReg = self::AS_REG;
 
         /* FROM prxgt_bon_referral_reg */
@@ -87,10 +92,20 @@ class GetRegistered
         $as = $asCust;
         $exp = $this->getExpForCustName();
         $cols = [
-            self::A_REFERRAL => $exp
+            self::A_CUST_NAME => $exp
         ];
         $cond = $as . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID
             . '=' . $asOrdr . '.' . Cfg::E_SALE_ORDER_A_CUSTOMER_ID;
+        $result->joinLeft([$as => $tbl], $cond, $cols);
+
+        /* LEFT JOIN prxgt_dwnl_customer */
+        $tbl = $this->resource->getTableName(self::E_DWNL_CUST);
+        $as = $asDwnlCust;
+        $cols = [
+            self::A_CUST_MLM_ID => EDwnlCust::A_MLM_ID
+        ];
+        $cond = $as . '.' . EDwnlCust::A_CUSTOMER_REF
+            . '=' . $asCust . '.' . Cfg::E_CUSTOMER_A_ENTITY_ID;
         $result->joinLeft([$as => $tbl], $cond, $cols);
 
         /* query tuning */
@@ -102,7 +117,7 @@ class GetRegistered
         return $result;
     }
 
-    public function getExpForCustName()
+    private function getExpForCustName()
     {
         $value = 'CONCAT(' . self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_FIRSTNAME . ", ' ', " .
             self::AS_CUST . '.' . Cfg::E_CUSTOMER_A_LASTNAME . ')';

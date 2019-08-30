@@ -75,8 +75,8 @@ class Pv
             }
             if (!is_null($customerId) || $isReferralSale) {
                 if ($isReferralSale) {
-                    $mlmId = $this->getMlmId($customerId);
-                    $note = "PV for referral sale #$saleIncId (cust.: $mlmId)";
+                    $referralId = $this->getReferralId($customerId);
+                    $note = "PV for referral order #$saleIncId ($referralId)";
                     $customerId = $beneficiaryId;
                 } else {
                     $note = "PV for sale #$saleIncId";
@@ -120,10 +120,23 @@ class Pv
         return $result;
     }
 
-    private function getMlmId($custId)
+    private function getReferralId($custId)
     {
+        // get MLM ID
         $entity = $this->daoDwnlCust->getById($custId);
-        $result = $entity->getMlmId();
+        $mlmId = $entity->getMlmId();
+        // get customer name
+        /* get referral customer ID */
+        $pkey = [Cfg::E_COMMON_A_ENTITY_ID => $custId];
+        $cols = [
+            Cfg::E_CUSTOMER_A_FIRSTNAME,
+            Cfg::E_CUSTOMER_A_LASTNAME
+        ];
+        $entity = $this->daoGeneric->getEntityByPk(Cfg::ENTITY_MAGE_CUSTOMER, $pkey, $cols);
+        $nameFirst = $entity[Cfg::E_CUSTOMER_A_FIRSTNAME];
+        $nameLast = $entity[Cfg::E_CUSTOMER_A_LASTNAME];
+        // compose result
+        $result = "by $nameFirst $nameLast, #$mlmId";
         return $result;
     }
 

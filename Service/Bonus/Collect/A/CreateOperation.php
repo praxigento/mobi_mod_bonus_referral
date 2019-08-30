@@ -37,7 +37,7 @@ class CreateOperation
      * @param int $saleId internal ID for sale order
      * @param string $saleInc incremental ID for sale order
      * @param int $custId internal ID of the sponsor (for whom the bonus is paid)
-     * @param string $referral name of the customer that composed the order
+     * @param string $referral name & MLM ID of the customer that composed the order ("First Last, #1234567890")
      * @param float $amount bounty or fee value (positive)
      * @param bool $isBounty 'true' - pay $amount to customer, 'false' - pay fee from customer account
      * @return int operation ID
@@ -53,12 +53,12 @@ class CreateOperation
         $trans = [];
         $tranBonus = new ETrans();
         if ($isBounty) {
-            $note = "Referral bonus for order #$saleInc by $referral.";
+            $note = "Referral bonus for order #$saleInc (by $referral).";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_BOUNTY;
             $accDebit = $accIdSys;
             $accCredit = $accIdCust;
         } else {
-            $note = "Referral bonus fee for order #$saleInc by $referral.";
+            $note = "Referral bonus fee for order #$saleInc (by $referral).";
             $operType = Cfg::CODE_TYPE_OPER_BONUS_REF_FEE;
             $accDebit = $accIdCust;
             $accCredit = $accIdSys;
