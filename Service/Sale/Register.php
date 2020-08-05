@@ -31,6 +31,8 @@ class Register
     private $hlpStock;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
+    /** @var \Magento\Customer\Api\CustomerRepositoryInterface */
+    private $repoCust;
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     private $scopeConfig;
     /** @var \Praxigento\BonusReferral\Service\Sale\Calc */
@@ -39,6 +41,7 @@ class Register
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Directory\Model\CurrencyFactory $factCur,
+        \Magento\Customer\Api\CustomerRepositoryInterface $repoCust,
         \Praxigento\Core\Api\App\Logger\Main $logger,
         \Praxigento\BonusReferral\Repo\Dao\Registry $daoReg,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
@@ -49,6 +52,7 @@ class Register
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->factCur = $factCur;
+        $this->repoCust = $repoCust;
         $this->logger = $logger;
         $this->daoReg = $daoReg;
         $this->hlpConfig = $hlpConfig;
@@ -95,6 +99,23 @@ class Register
         return [$amountBase, $feeBase];
     }
 
+    /**
+     * Change group for customer if customer is not distributor but should get referral bonus.
+     *
+     * @param $custId
+     * @param $groupId
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\State\InputMismatchException
+     */
+    private function changeGroupToDistr($custId, $groupId)
+    {
+        $customer = $this->repoCust->getById($custId);
+        $customer->setGroupId($groupId);
+        $this->repoCust->save($customer);
+    }
+
     public function exec($request)
     {
         /** define local working data */
@@ -108,9 +129,15 @@ class Register
         if ($isEnabled) {
             $distrGroups = $this->hlpDwnlCfg->getDowngradeGroupsDistrs();
             $groupId = $sale->getCustomerGroupId();
+            $custId = $sale->getCustomerId();
             $isDistr = in_array($groupId, $distrGroups);
             if (!$isDistr) {
                 [$beneficiaryId, $bnfGroupId] = $this->hlpRegister->getBeneficiaryId($sale);
+                if ($custId == $beneficiaryId) {
+                    /* customer is beneficiary of referral bonus for own sale but is not distr */
+                    /* we should change group for customer */
+                    $this->changeGroupToDistr($custId, $bnfGroupId);
+                }
                 list($amount, $fee) = $this->calcAmounts($sale, $beneficiaryId, $bnfGroupId);
                 $state = ($saleState == MSaleOrder::STATE_PROCESSING)
                     ? ERegistry::STATE_PENDING : ERegistry::STATE_REGISTERED;
@@ -124,7 +151,6 @@ class Register
         $result = new AResponse();
         return $result;
     }
-
 
     /**
      * Save new bonus entry in DB.
