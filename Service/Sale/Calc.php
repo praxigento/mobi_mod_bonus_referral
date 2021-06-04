@@ -68,6 +68,7 @@ class Calc
     {
         /** define local working data */
         assert($request instanceof ARequest);
+        $result = new AResponse();
         $bnfId = $request->getBeneficiaryId();
         $bnfGroupId = $request->getBeneficiaryGroupId();
         /** @var \Magento\Sales\Model\Order $sale */
@@ -112,17 +113,13 @@ class Calc
             $delta = $baseAmntCust - $baseAmntUp;
             $fee = $this->calculateFee($delta);
             $this->logger->info("Referral bonus calc for sale $saleId (ref - distr = delta; fee): $baseAmntUp - $baseAmntCust = $delta; $fee");
+            /** compose result */
+            if ($delta) $result->setDelta($delta);
+            if ($fee) $result->setFee($fee);
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
-        /** compose result */
-        $result = new AResponse();
-        if ($delta) {
-            $result->setDelta($delta);
-        }
-        if ($fee) {
-            $result->setFee($fee);
-        }
+
         return $result;
     }
 
