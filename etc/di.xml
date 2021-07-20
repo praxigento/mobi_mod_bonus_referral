@@ -32,6 +32,12 @@
     <!-- ******* -->
     <!-- PLUGINS -->
     <!-- ******* -->
+    <type name="Magento\CatalogInventory\Observer\QuantityValidatorObserver">
+        <!-- Skip quantity validation for referral bonus calculations. -->
+        <plugin name="prxgt_bon_ref_plugin"
+                type="Praxigento\BonusReferral\Plugin\Magento\CatalogInventory\Observer\QuantityValidatorObserver"
+                sortOrder="800" disabled="false"/>
+    </type>
     <type name="Praxigento\Pv\Observer\SalesModelServiceQuoteSubmitSuccess">
         <!-- Register referral sale before PV accounting. -->
         <plugin name="prxgt_bon_ref_plugin"

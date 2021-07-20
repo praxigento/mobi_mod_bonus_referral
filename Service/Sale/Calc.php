@@ -30,6 +30,8 @@ class Calc
     private $hlpPriceLoader;
     /** @var \Praxigento\Core\Api\App\Logger\Main */
     private $logger;
+    /** @var \Magento\Catalog\Helper\Product */
+    private $hlpProduct;
 
     public function __construct(
         \Praxigento\Core\Api\App\Logger\Main $logger,
@@ -39,6 +41,7 @@ class Calc
         \Magento\Customer\Api\CustomerRepositoryInterface $daoCust,
         \Praxigento\BonusReferral\Helper\Config $hlpConfig,
         \Praxigento\Core\Api\Helper\Format $hlpFormat,
+        \Magento\Catalog\Helper\Product $hlpProduct,
         \Praxigento\Warehouse\Helper\PriceLoader $hlpPriceLoader
     ) {
         $this->logger = $logger;
@@ -48,6 +51,7 @@ class Calc
         $this->daoCust = $daoCust;
         $this->hlpConfig = $hlpConfig;
         $this->hlpFormat = $hlpFormat;
+        $this->hlpProduct = $hlpProduct;
         $this->hlpPriceLoader = $hlpPriceLoader;
     }
 
@@ -64,8 +68,7 @@ class Calc
         return $result;
     }
 
-    public function exec($request)
-    {
+    public function exec($request) {
         /** define local working data */
         assert($request instanceof ARequest);
         $result = new AResponse();
@@ -75,6 +78,9 @@ class Calc
         $sale = $request->getSaleOrder();
 
         /** perform processing */
+        $checkSalable = $this->hlpProduct->getSkipSaleableCheck();
+        $this->hlpProduct->setSkipSaleableCheck(true);
+        \Praxigento\BonusReferral\Helper\Flag::setRunning(true);
         try {
             $beneficiary = $this->daoCust->getById($bnfId);
             $bnfGroupId = $bnfGroupId ?? $beneficiary->getGroupId();
@@ -119,6 +125,8 @@ class Calc
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
+        \Praxigento\BonusReferral\Helper\Flag::setRunning(false);
+        $this->hlpProduct->setSkipSaleableCheck($checkSalable);
 
         return $result;
     }

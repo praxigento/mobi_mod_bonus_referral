@@ -21,7 +21,7 @@ class Register
         /** @var \Praxigento\BonusReferral\Service\Sale\Register $service */
         $service = $this->manObj->get(\Praxigento\BonusReferral\Service\Sale\Register::class);
         $req = new \Praxigento\BonusReferral\Service\Sale\Register\Request();
-        $sale = $repo->get(3590);
+        $sale = $repo->get(5485);
         $req->setSaleOrder($sale);
         $resp = $service->exec($req);
         $this->assertTrue(true);
